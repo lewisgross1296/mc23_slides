@@ -1,0 +1,155 @@
+\documentclass[8pt,t]{beamer}
+\usetheme{Wisconsin}
+\usepackage[utf8]{inputenc}
+\setbeamertemplate{page number in head/foot}[totalframenumber]
+\setbeamerfont{block body}{size=\footnotesize}
+\setlength{\leftmargini}{0pt}
+
+%subcaptions
+\usepackage{subcaption}
+% \captionsetup[subfigure]{labelformat=empty} % turn off labeling figures
+
+% turn off Figure in captions
+\usepackage{caption}
+% \captionsetup[figure]{labelformat=empty}
+
+\newcommand{\QOR}{\qquad \text{OR} \qquad}
+\newcommand{\QAND}{\qquad \text{AND} \qquad}
+\newcommand{\QTHUS}{\qquad \text{THUS} \qquad}
+\newcommand{\QTHEN}{\qquad \text{THEN} \qquad}
+\newcommand{\QWITH}{\qquad \text{WITH} \qquad}
+\newcommand{\QFOR}{\qquad \text{FOR} \qquad}
+\newcommand{\QSO}{\qquad \text{SO} \qquad}
+\newcommand{\QWHERE}{\qquad \text{WHERE} \qquad}
+\newcommand{\LINE}{\par\noindent\rule{\textwidth}{0.4pt}\par}
+\newcommand{\toinf}{\rightarrow\infty}
+\newcommand{\tozero}{\rightarrow0}
+\newcommand{\qeq}{\overset{?}{=}}
+\newcommand{\ceq}{\overset{\checkmark}{=}}
+\renewcommand{\epsilon}{\varepsilon}
+
+
+% Roman Numerals
+\newcommand{\rom}[1]{\expandafter\uppercase{\Romannumeral #1\relax}}
+
+% hypersetup
+\usepackage{hyperref}
+\hypersetup{colorlinks,
+            linkcolor = white,
+            citecolor = white,
+            urlcolor = cyan
+}
+
+
+\def\brac#1{\{#1\}}
+\def\Brac#1{\big\{#1\big\}}
+\def\BRAC#1{\bigg\{#1\bigg\}}
+\def\angbrac#1{\langle#1\rangle}
+\def\Angbrac#1{\big\langle#1\big\rangle}
+\def\ANGBRAC#1{\bigg\langle#1\bigg\rangle}
+
+% Comment out to eliminate transitional slides
+\AtBeginSection[]
+{
+    \begin{frame}
+        \frametitle{Table of Contents}
+        \tableofcontents[currentsection]
+    \end{frame}
+}
+
+
+% Bibliography
+\usepackage[sorting=none]{biblatex} %Imports biblatex package and cites in order of appearance
+\addbibresource{mc2023_pres.bib} %Import the bibliography file
+% make all font colors white
+\setbeamercolor{bibliography item}{fg=white}
+\setbeamercolor{bibliography entry author}{fg=white}
+\setbeamercolor{bibliography entry title}{fg=white}
+\setbeamercolor{bibliography entry location}{fg=white}
+\setbeamercolor{bibliography entry note}{fg=white}
+% adds numeric labels linked to bib entries
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+% eliminate header within an environment
+\makeatletter
+    \newenvironment{withoutheadline}{
+       \setbeamertemplate{headline}[default]
+       \def\beamer@entrycode{\vspace*{-\headheight}}
+    }{}
+\makeatother
+
+\title{Verification of the Cardinal Multiphysics Solver}
+\subtitle{1-D Coupled Heat Transfer and Neutron Transport}
+\author{Lewis Gross}
+\date{August 15, 2022}
+
+\begin{document}
+\maketitle
+
+%%----------------------------------------------------------------------------%%
+%% Overview
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+
+%%----------------------------------------------------------------------------%%
+%% Section 1
+%%----------------------------------------------------------------------------%%
+\section{Introduction}
+\begin{frame}{Who are you?}
+    \begin{itemize}
+        \item Hi
+    \end{itemize}
+\end{frame}
+
+
+%%----------------------------------------------------------------------------%%
+%% Section 2
+%%----------------------------------------------------------------------------%%
+\section{Analytical Benchmark}
+\begin{frame}{Analytical Benchmark}
+    \begin{itemize}
+        \item Hi
+    \end{itemize}
+\end{frame}
+
+
+%%----------------------------------------------------------------------------%%
+%% Section 3
+%%----------------------------------------------------------------------------%%
+\section{Computational Model}
+\begin{frame}{Analytical Benchmark}
+    \begin{itemize}
+        \item Hi
+    \end{itemize}
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+%% Section 4
+%%----------------------------------------------------------------------------%%
+\section{Results and Discussion}
+\begin{frame}{Look at our pretty pictures}
+    \begin{itemize}
+        \item discuss
+    \end{itemize}
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+%% Bibliography
+%%----------------------------------------------------------------------------%%
+
+\begin{frame}{Bibliography}
+    \begin{itemize}
+        \item \cite{analytical-benchmark} \cite{aya2023} \cite{brown-entropy-2006} \cite{dufek} \cite{lindsay2022moose} \cite{nekrs} \cite{novak-2023} \cite{novak2022-cardinal} \cite{openmc}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Bibliography}
+    \tiny
+    \printbibliography
+\end{frame}
+
+
+\end{document}
