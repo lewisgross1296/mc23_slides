@@ -15,12 +15,10 @@ pdf: $(manuscript).tex
 	pdflatex $(latexopt) $(manuscript)
 	cp build/$(manuscript).pdf .
 
-diff:
-	./diff.xsh --manuscript $(manuscript)-diff submitted
-
 clean:
 	rm -rf build
 
+# TODO fix
 zip:
 	zip paper.zip *.tex *.eps *.bib
 
