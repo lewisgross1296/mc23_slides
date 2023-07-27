@@ -18,8 +18,4 @@ pdf: $(manuscript).tex
 clean:
 	rm -rf build
 
-# TODO fix
-zip:
-	zip paper.zip *.tex *.eps *.bib
-
 .PHONY: all clean
