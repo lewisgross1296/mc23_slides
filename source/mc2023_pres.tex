@@ -82,6 +82,9 @@
     }{}
 \makeatother
 
+% appendix renumbering
+\usepackage{appendixnumberbeamer}
+
 \title{Verification of the Cardinal Multiphysics Solver}
 \subtitle{1-D Coupled Heat Transfer and Neutron Transport}
 \author{Lewis Gross, April Novak, Patrick Shriwise, and Paul Wilson\vspace*{-1cm}}
@@ -111,10 +114,9 @@
 \section{Introduction}
 \begin{frame}{Introduction}
     \begin{itemize}
-        \item Nuclear systems have many types of physics that are coupled!
-        \item Multiphysics simulations are becoming more and more popular.
+        \item High Fidelity multiphysics simulations are the future of reactor design.
+        \item Many new emerging tools have great potential, but require Verification and Validation.
         \item Cardinal \cite{novak2022-cardinal} our software choice couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}.
-        \item High burden of proof to design systems. The tools we use need V\&V to gain trustworthiness.
         \item Verification via analytical benchmarks allow measurement of true accuracy for numerical simulation.
         \item Greisheimer and Kooreman 1-D presented an analytical benchmark that features coupled heat transfer
               and neutron transport \cite{analytical-benchmark}.
@@ -212,27 +214,31 @@
         \item<8-> Library has data for every integer temperature between 308 K and 358 K and rounds to nearest for a lookup between two data points.
         \item<9-> Library uses one energy group from $0$ to $20$ MeV.
         \item<10-> $S_{2}$ patch to restrict particle birth direction and scattering direction to only $\pm$x.
-        \item<11->Tallies flux and kappa-fission heating rate in each cell.
+        \item<11->Tallies flux and kappa-fission heating rate.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{MOOSE Heat Conduction Model}
     \begin{itemize}
         \item Mesh with identical dimensions as OpenMC model. Allows 1:1 feedback between single physics solves.
-        \item MOOSE Heat Conduction Module accepts heating rate in each mesh element from OpenMC and used solves for temperature distribution.
+        \item MOOSE accepts heating rate in each mesh element from OpenMC and solves for temperature distribution.
         \item Convective boundary conditions at end points with heat since temperature $T_{0}$.
         \item Jacobi Free Newton Krylov solver: $10^{-7}$ absolute tolerance and $10^{-9}$ relative tolerance
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Coupling, Data Mapping, and Convergence Criteria}
+    \begin{figure}[T]
+        \centering
+        \includegraphics[width=\linewidth]{figures/cardinal_solid.png}
+    \end{figure}
     \begin{itemize}
-        \item Picard Iteration: 200
-        \item Starts OpenMC, computes heat source. Sends to MOOSE, computes temp, sends back to OpenMC and re-runs transport with updated cross sections based on new temperatures
-        \item flux relaxations \cite{dufek}
-        \item $k$-eigenvalue simulation used 50,000 particles per batch, with 50 inactive batches and 100 active batches for each case of $N$. Shannon Entropy study confirmed this sufficient following criteria from \cite{brown-entropy-2006}.
-        \item Extra long OpenMC solve after converging temp
-        \item Normalization for tallied quantities
+        \item 200 Picard Iterations. Robbins-Monro relaxation assisted statistics \cite{dufek}.
+        \item $k$-eigenvalue simulation used 50,000 particles per batch, 50 inactive batches and 100 active batches.
+        \begin{itemize}
+            \item Shannon Entropy study confirmed this sufficient following criteria from \cite{brown-entropy-2006}.
+        \end{itemize}
+        \item Final transport solve with converged temperature used 250,000 particles per batch.
     \end{itemize}
 \end{frame}
 
@@ -242,9 +248,54 @@
 %%----------------------------------------------------------------------------%%
 \section{Results and Discussion}
 \begin{frame}{Outputs and Comparisons}
+    \begin{figure}[T]
+        \centering
+        \begin{subfigure}[b]{0.475\linewidth}
+            \centering
+            \includegraphics[height=0.8\linewidth]{figures/temp_50.png}
+        \end{subfigure}\hspace{0.25cm}
+        \begin{subfigure}[b]{0.475\linewidth}
+        \centering
+            \includegraphics[height=0.8\linewidth]{figures/flux_50.png}
+        \end{subfigure}
+    \end{figure}
     \begin{itemize}
-        \item results
+        \item Numerical solutions for 50 mesh elements. The error bars show the relative error of the flux, which are
+        nearly smaller than the circular marker sizes.
     \end{itemize}
+\end{frame}
+
+\begin{frame}{Solution $L_{2}$ error norms}
+    \begin{figure}[T]
+        \centering
+        \begin{subfigure}{0.475\linewidth}
+            \includegraphics[height=0.8\linewidth]{figures/temp_error_norms.png}
+        \end{subfigure}\hspace{0.35cm}
+        \begin{subfigure}{0.475\linewidth}
+            \includegraphics[height=0.8\linewidth]{figures/flux_error_norms.png}
+        \end{subfigure}
+    \end{figure}
+    \begin{itemize}
+        \item Error norms as a function of heat conduction mesh element count and OpenMC cell count, respectively.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Computed to Expected Ratios}
+    \begin{figure}[T]
+        \begin{subfigure}{0.475\linewidth}
+            \includegraphics[height=0.8\linewidth]{figures/fine_temp_num_to_analy_ratios.png}
+        \end{subfigure}\hspace{0.4cm}
+        \begin{subfigure}{0.475\linewidth}
+            \includegraphics[height=0.8\linewidth]{figures/fine_flux_num_to_analy_ratios.png}
+        \end{subfigure}
+    \end{figure}
+    \begin{itemize}
+        \item $C/E$ for fine cases ($N=50,100,250,500,1000$). Note the scales of the $y$-axes - the temperature is everywhere being predicted to within 0.006\% (for the coarsest shown temperature mesh) and flux is everywhere being predicted to within 0.05\%.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Individual Flux $C/E$ with $2\sigma$ Error Bars}
+    
 \end{frame}
 
 \begin{frame}{Future and companion work}
@@ -266,23 +317,26 @@
 \begin{withoutheadline}
     \begin{frame}{Acknowledgements}
         \begin{itemize}
+            \item Benchmark authors: David P. Greisheimer and Gabriel Kooreman
             \item Co-authors: April J. Novak, Patrick Shriwise, Paul P.H. Wilson
             \item OpenMC, Cardinal, and MOOSE teams!
         \end{itemize}
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.8\linewidth]{figures/openmc_logo.png}
+            \includegraphics[width=0.75\linewidth]{figures/openmc_logo.png}
         \end{figure}
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.8\linewidth]{figures/cardinal_logo.png}
+            \includegraphics[width=0.75\linewidth]{figures/cardinal_logo.png}
         \end{figure}
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.8\linewidth]{figures/moose_logo.png}
+            \includegraphics[width=0.75\linewidth]{figures/moose_logo.png}
         \end{figure}
     \end{frame}
 \end{withoutheadline}
+
+\appendix
 
 \begin{withoutheadline}
 \begin{frame}[allowframebreaks]{Ensuring Validity of the Fundamental Ansatz}

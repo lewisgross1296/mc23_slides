@@ -13,7 +13,7 @@ pdf: $(manuscript).tex
 	biber build/$(references)
 	pdflatex $(latexopt) $(manuscript)
 	pdflatex $(latexopt) $(manuscript)
-	cp build/$(manuscript).pdf .
+	cp build/$(manuscript).pdf ..
 
 clean:
 	rm -rf build
