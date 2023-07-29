@@ -84,6 +84,8 @@
 
 % appendix renumbering
 \usepackage{appendixnumberbeamer}
+% frame breaks with same title
+\setbeamertemplate{frametitle continuation}[from second][]
 
 \title{Verification of the Cardinal Multiphysics Solver}
 \subtitle{1-D Coupled Heat Transfer and Neutron Transport}
@@ -112,15 +114,29 @@
 %% Section 1
 %%----------------------------------------------------------------------------%%
 \section{Introduction}
-\begin{frame}{Introduction}
+\begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V: Cardinal}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/assembly_solid_temp_fine.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V: Cardinal}
+    \pause
     \begin{itemize}
-        \item High Fidelity multiphysics simulations are the future of reactor design.
-        \item Many new emerging tools have great potential, but require Verification and Validation.
-        \item Cardinal \cite{novak2022-cardinal} our software choice couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}.
-        \item Verification via analytical benchmarks allow measurement of true accuracy for numerical simulation.
-        \item Greisheimer and Kooreman 1-D presented an analytical benchmark that features coupled heat transfer
-              and neutron transport \cite{analytical-benchmark}.
+        % \item High Fidelity multiphysics simulations are the future of reactor design.
+        \item<2-> Many new emerging tools have great potential, but they require Verification and Validation.
+        \item<3-> Verification via analytical benchmarks allow measurement of true error for a numerical simulation.
+        \item<4-> Greisheimer and Kooreman 1-D presented an analytical benchmark that features coupled heat transfer and neutron transport \cite{analytical-benchmark}.
+        \item<5-> Cardinal \cite{novak2022-cardinal} our software choice to model this benchmark couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}
     \end{itemize}
+\end{frame}
+
+\begin{frame}{Cardinal and MOOSE Framework}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/framework.png}
+    \end{figure}
 \end{frame}
 
 
@@ -219,26 +235,28 @@
 \end{frame}
 
 \begin{frame}{MOOSE Heat Conduction Model}
+    \pause
     \begin{itemize}
-        \item Mesh with identical dimensions as OpenMC model. Allows 1:1 feedback between single physics solves.
-        \item MOOSE accepts heating rate in each mesh element from OpenMC and solves for temperature distribution.
-        \item Convective boundary conditions at end points with heat since temperature $T_{0}$.
-        \item Jacobi Free Newton Krylov solver: $10^{-7}$ absolute tolerance and $10^{-9}$ relative tolerance
+        \item<2-> Mesh with identical dimensions as OpenMC model. Allows 1:1 feedback between single physics solves.
+        \item<3-> MOOSE accepts heating rate in each mesh element from OpenMC and solves for temperature distribution.
+        \item<4-> Convective boundary conditions at end points with heat since temperature $T_{0}$.
+        \item<5-> Jacobi Free Newton Krylov solver: $10^{-7}$ absolute tolerance and $10^{-9}$ relative tolerance
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Coupling, Data Mapping, and Convergence Criteria}
+    \pause
     \begin{figure}[T]
         \centering
-        \includegraphics[width=\linewidth]{figures/cardinal_solid.png}
+        \includegraphics[width=\linewidth]{figures/cardinal_solid.png}<2->
     \end{figure}
     \begin{itemize}
-        \item 200 Picard Iterations. Robbins-Monro relaxation assisted statistics \cite{dufek}.
-        \item $k$-eigenvalue simulation used 50,000 particles per batch, 50 inactive batches and 100 active batches.
+        \item<3-> 200 Picard Iterations. Robbins-Monro relaxation assisted tally statistics \cite{dufek}.
+        \item<4-> $k$-eigenvalue simulation used 50,000 particles per batch, 50 inactive batches and 100 active batches.
         \begin{itemize}
-            \item Shannon Entropy study confirmed this sufficient following criteria from \cite{brown-entropy-2006}.
+            \item<5-> Shannon Entropy study confirmed this sufficient following criteria from \cite{brown-entropy-2006}.
         \end{itemize}
-        \item Final transport solve with converged temperature used 250,000 particles per batch.
+        \item<6-> Final transport solve with converged temperature used 250,000 particles per batch.
     \end{itemize}
 \end{frame}
 
@@ -249,30 +267,29 @@
 \section{Results and Discussion}
 \begin{frame}{Outputs and Comparisons}
     \begin{figure}[T]
-        \centering
-        \begin{subfigure}[b]{0.475\linewidth}
+        \hspace*{-1cm}
+        \begin{subfigure}[b]{0.495\linewidth}
             \centering
-            \includegraphics[height=0.8\linewidth]{figures/temp_50.png}
-        \end{subfigure}\hspace{0.25cm}
-        \begin{subfigure}[b]{0.475\linewidth}
+            \includegraphics[height=0.85\linewidth]{figures/temp_50.png}
+        \end{subfigure}\hspace*{0.6cm}
+        \begin{subfigure}[b]{0.495\linewidth}
         \centering
-            \includegraphics[height=0.8\linewidth]{figures/flux_50.png}
+            \includegraphics[height=0.85\linewidth]{figures/flux_50.png}
         \end{subfigure}
     \end{figure}
     \begin{itemize}
-        \item Numerical solutions for 50 mesh elements. The error bars show the relative error of the flux, which are
-        nearly smaller than the circular marker sizes.
+        \item Numerical solutions for 50 mesh elements. On the right, error bars show the relative error of the flux, which are nearly smaller than the circular marker sizes.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Solution $L_{2}$ error norms}
+\begin{frame}{Solution $L_{2}$ Error Norms}
     \begin{figure}[T]
-        \centering
-        \begin{subfigure}{0.475\linewidth}
-            \includegraphics[height=0.8\linewidth]{figures/temp_error_norms.png}
-        \end{subfigure}\hspace{0.35cm}
-        \begin{subfigure}{0.475\linewidth}
-            \includegraphics[height=0.8\linewidth]{figures/flux_error_norms.png}
+        \hspace*{-0.9cm}
+        \begin{subfigure}{0.4995\linewidth}
+            \includegraphics[height=0.85\linewidth]{figures/temp_error_norms.png}
+        \end{subfigure}\hspace*{0.85cm}
+        \begin{subfigure}{0.4995\linewidth}
+            \includegraphics[height=0.85\linewidth]{figures/flux_error_norms.png}
         \end{subfigure}
     \end{figure}
     \begin{itemize}
@@ -281,12 +298,14 @@
 \end{frame}
 
 \begin{frame}{Computed to Expected Ratios}
+    \vspace*{-0.4cm}
     \begin{figure}[T]
-        \begin{subfigure}{0.475\linewidth}
-            \includegraphics[height=0.8\linewidth]{figures/fine_temp_num_to_analy_ratios.png}
-        \end{subfigure}\hspace{0.4cm}
-        \begin{subfigure}{0.475\linewidth}
-            \includegraphics[height=0.8\linewidth]{figures/fine_flux_num_to_analy_ratios.png}
+        \hspace*{-0.87cm}
+        \begin{subfigure}{0.495\linewidth}
+            \includegraphics[height=0.85\linewidth]{figures/fine_temp_num_to_analy_ratios.png}
+        \end{subfigure}\hspace*{0.85cm}
+        \begin{subfigure}{0.495\linewidth}
+            \includegraphics[height=0.85\linewidth]{figures/fine_flux_num_to_analy_ratios.png}
         \end{subfigure}
     \end{figure}
     \begin{itemize}
@@ -294,9 +313,46 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Individual Flux $C/E$ with $2\sigma$ Error Bars}
-    
+\begin{frame}{Individual Flux $C/E$ with $2\sigma$ Error Bars for Fine Cases}
+    \begin{figure}[T]
+        \hspace*{-1.1cm}
+        \begin{subfigure}{0.495\textwidth}
+            \includegraphics[width=1.18\linewidth]{figures/50_flux_CE_error_bars.png}
+        \end{subfigure}\hspace*{0.89cm}
+        \begin{subfigure}{0.495\textwidth}
+            \includegraphics[width=1.18\linewidth]{figures/100_flux_CE_error_bars.png}
+        \end{subfigure}
+    \end{figure}
+    \begin{itemize}
+        \item $C/E$ in blue with $2\sigma$ error bars (gray bounded by purple). $50$ and $100$ cells.
+    \end{itemize}
 \end{frame}
+
+\begin{frame}{Individual Flux $C/E$ with $2\sigma$ Error Bars for Fine Cases}
+    \begin{figure}[T]
+        \hspace*{-1.1cm}
+        \begin{subfigure}{0.495\textwidth}
+            \includegraphics[width=1.18\linewidth]{figures/250_flux_CE_error_bars}
+        \end{subfigure}\hspace*{0.89cm}
+        \begin{subfigure}{0.495\textwidth}
+            \includegraphics[width=1.18\linewidth]{figures/500_flux_CE_error_bars}
+        \end{subfigure}
+    \end{figure}
+    \begin{itemize}
+        \item $C/E$ in blue with $2\sigma$ error bars (gray bounded by purple). $250$ and $500$ cells
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Individual Flux $C/E$ with $2\sigma$ Error Bars for Fine Cases}
+    \begin{figure}[T]
+        \centering
+        \includegraphics[width=0.8\linewidth]{figures/1000_flux_CE_error_bars}
+    \end{figure}
+    \begin{itemize}
+        \item $C/E$ in blue with $2\sigma$ error bars (gray bounded by purple). $1000$ cells.
+    \end{itemize}
+\end{frame}
+
 
 \begin{frame}{Future and companion work}
     \begin{itemize}
@@ -338,6 +394,22 @@
 
 \appendix
 
+
+\begin{frame}{Coarse $C/E$ results}
+    \begin{figure}[T]
+        \begin{subfigure}{0.475\linewidth}
+            \includegraphics[height=0.8\linewidth]{figures/coarse_temp_num_to_analy_ratios.png}
+        \end{subfigure}\hspace{0.3cm}
+        \begin{subfigure}{0.475\linewidth}
+            \includegraphics[height=0.8\linewidth]{figures/coarse_flux_num_to_analy_ratios.png}
+        \end{subfigure}
+    \end{figure}
+    \begin{itemize}
+        \item $C/E$ for coarse cases ($N=5,10,25$). The coarse cases' errors are a few orders of magnitude larger than the fine cases. A significant improvement in agreement can be seen between each coarse case.
+    \end{itemize}
+\end{frame}
+
+
 \begin{withoutheadline}
 \begin{frame}[allowframebreaks]{Ensuring Validity of the Fundamental Ansatz}
     \begin{itemize}
@@ -372,13 +444,13 @@
             \QAND \\
             \frac{d}{dx}\left\lbrack  \frac{f\phi(x)}{\Sigma_{t,0}T_{0}} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t,0}\frac{T_{0}}{f}
             \left(\lambda - 1\right) = 0
-        \end{multline}
+        \end{multline}\vspace{-0.5cm}
         \begin{multline}
             \frac{d}{dx}\left\lbrack \phi(x)\frac{d\phi(x)}{dx}\right\rbrack + \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{f^3} = 0
             \QAND \\
             \frac{d}{dx}\left\lbrack \phi(x)\frac{d\phi(x)}{dx} \right\rbrack +
             \left(\Sigma_{t,0}\frac{T_{0}}{f}\right)^2 \left(\lambda - 1\right) = 0
-        \end{multline}
+        \end{multline} 
         \item In order to make the ansatz hold, this implies that
         \begin{equation}
             \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{f^3} = \left(\Sigma_{t,0}\frac{T_{0}}{f}\right)^2 \left(\lambda - 1\right)
@@ -509,6 +581,7 @@
         \begin{multline}
             \phi(x=\frac{L}{2}) =  \psi(x=\frac{L}{2},\mu =1) \QAND \\ \phi(x=-\frac{L}{2}) =  \psi(x=-\frac{L}{2},\mu =-1)
         \end{multline}
+        \vspace*{-0.4cm}
         \begin{multline}
             J(x=\frac{L}{2}) = \psi(x=\frac{L}{2},\mu =1) \QAND \\ J(x=-\frac{L}{2}) = - \psi(x=-\frac{L}{2},\mu =-1)
         \end{multline}
