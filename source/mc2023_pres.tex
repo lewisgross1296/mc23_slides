@@ -91,7 +91,7 @@
 % frame breaks with same title
 \setbeamertemplate{frametitle continuation}[from second][]
 
-\title{Verification of the Cardinal Multiphysics Solver}
+\title{Verification of the Cardinal Multiphysics Solver for}
 \subtitle{1-D Coupled Heat Transfer and Neutron Transport}
 \author{Lewis Gross, April Novak, Patrick Shriwise, and Paul Wilson\vspace*{-1cm}}
 \date{August 15, 2022}
@@ -133,13 +133,13 @@
     \begin{itemize}
         % \item High Fidelity multiphysics simulations are the future of reactor design.
         \item <2-> Many new emerging tools have great potential, but they require Verification and Validation (V\&V).
-        \item <3-> Verification via analytical benchmarks allow measurement of true error for a numerical simulation.
+        \item <3-> Verification via analytical benchmarks allows measurement of true error for a numerical simulation.
         \item <4-> Greisheimer and Kooreman presented a 1-D analytical benchmark that features coupled heat transfer and neutron transport \cite{analytical-benchmark}.
         \item <5-> Cardinal \cite{novak2022-cardinal} our software choice to model this benchmark couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Cardinal's connection to the MOOSE Framework \cite{cardinal-tutorials}}
+\begin{frame}{Cardinal's connection to the MOOSE Framework}
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.9\linewidth]{figures/framework.png}
@@ -202,7 +202,7 @@
 \begin{frame}{System Domain, Differential Equations, and Boundary Conditions}
     \begin{figure}[T]
         \centering
-        \includegraphics[width=0.725\linewidth]{figures/1D_Benchmark_Diagram.png}<1->
+        \includegraphics[width=\linewidth]{figures/1D_Benchmark_Diagram.png}<1->
     \end{figure}
     \begin{itemize}
         \item <2-> The fundamental assumption (ansatz) of \cite{analytical-benchmark}: $T(x)=f\phi(x)$.
@@ -248,7 +248,7 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Coupling, Data Mapping \cite{cardinal-tutorials}, and Convergence Criteria}
+\begin{frame}{Coupling, Data Mapping, and Convergence Criteria}
     \pause
     \begin{figure}[T]
         \centering
@@ -432,6 +432,15 @@
             \centering
             \includegraphics[width=0.75\linewidth]{figures/moose_logo.png}
         \end{figure}
+    \end{frame}
+\end{withoutheadline}
+
+\begin{withoutheadline}
+    \begin{frame}{Questions?}
+        \begin{itemize}
+            \item Cardinal website: {\tt \color{blue}https://cardinal.cels.anl.gov}
+            \item Cardinal repository: {\tt\color{blue} https://github.com/neams-th-coe/cardinal.git}
+        \end{itemize}
     \end{frame}
 \end{withoutheadline}
 
