@@ -31,7 +31,11 @@
 \newcommand{\qeq}{\overset{?}{=}}
 \newcommand{\ceq}{\overset{\checkmark}{=}}
 \renewcommand{\epsilon}{\varepsilon}
+\newcommand{\keff}{$k_{e\!f\!f}$}
 
+
+% table packages
+\usepackage{booktabs}
 
 % Roman Numerals
 \newcommand{\rom}[1]{\expandafter\uppercase{\Romannumeral #1\relax}}
@@ -114,25 +118,28 @@
 %% Section 1
 %%----------------------------------------------------------------------------%%
 \section{Introduction}
-\begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V: Cardinal}
+\begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V}
     \begin{figure}[H]
         \centering
-        \includegraphics[width=0.9\linewidth]{figures/assembly_solid_temp_fine.png}
+        \includegraphics[width=0.875\linewidth]{figures/assembly_solid_temp_fine.png}
     \end{figure}
-\end{frame}
-
-\begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V: Cardinal}
-    \pause
     \begin{itemize}
-        % \item High Fidelity multiphysics simulations are the future of reactor design.
-        \item<2-> Many new emerging tools have great potential, but they require Verification and Validation.
-        \item<3-> Verification via analytical benchmarks allow measurement of true error for a numerical simulation.
-        \item<4-> Greisheimer and Kooreman 1-D presented an analytical benchmark that features coupled heat transfer and neutron transport \cite{analytical-benchmark}.
-        \item<5-> Cardinal \cite{novak2022-cardinal} our software choice to model this benchmark couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}
+        \item Full-core multiphysics model of an HTGR using Cardinal: OpenMC power (left) and MOOSE solid temperature (right) \cite{novak2022-cardinal}.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Cardinal and MOOSE Framework}
+\begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V}
+    \pause
+    \begin{itemize}
+        % \item High Fidelity multiphysics simulations are the future of reactor design.
+        \item <2-> Many new emerging tools have great potential, but they require Verification and Validation (V\&V).
+        \item <3-> Verification via analytical benchmarks allow measurement of true error for a numerical simulation.
+        \item <4-> Greisheimer and Kooreman presented a 1-D analytical benchmark that features coupled heat transfer and neutron transport \cite{analytical-benchmark}.
+        \item <5-> Cardinal \cite{novak2022-cardinal} our software choice to model this benchmark couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Cardinal's connection to the MOOSE Framework \cite{cardinal-tutorials}}
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.9\linewidth]{figures/framework.png}
@@ -147,68 +154,65 @@
 \begin{frame}{Analytical Benchmark}
     \pause
     \begin{itemize}
-        \item<2-> This analytical benchmark includes $S_2$ transport, Doppler-broadened cross sections, 1-D thermal conduction
-        and expansion, and convective boundary conditions.
+        \item <2-> This analytical benchmark includes
         \begin{itemize}
-            \item<3-> $S_{2}$ transport restricts particles to move in the $\pm$x direction; or $\mu=\cos\theta=\pm 1$.
-            \item<4-> Doppler-broadening
+            \item <3-> $S_{2}$ transport: particles restricted to the $\pm$x direction.
+            \item <4-> Doppler-broadening
             \begin{equation}\label{doppler-micro-xs}
-                \sigma_{t}(x) = \sigma_{t,0}\sqrt{\frac{T_{0}}{T(x)}}.
+                \sigma_{t}(x) = \sigma_{t,0}\sqrt{\frac{T_{0}}{T(x)}}
             \end{equation}
-            \item<5-> 1-D thermal expansion
+            \item <5-> 1-D thermal expansion
             \begin{equation} \label{density-temp-relation}
-                \rho(x) =  \rho_{0} \sqrt{\frac{T_{0}}{T(x)}}.
+                \rho(x) =  \rho_{0} \sqrt{\frac{T_{0}}{T(x)}}
             \end{equation}
-            \item<6-> Linear temperature dependence on thermal conductivity
+            \item <6-> Linear temperature dependence for thermal conductivity
             \begin{equation}\label{thermal-conductivity-temp-relation}
                 \kappa(x) = \kappa_{0} T(x)
             \end{equation}
         \end{itemize}\vspace*{-0.4cm}
-        \item<7-> The conduction equation governs energy conservation in the slab and can be described in terms of the thermal conductivity
-        $\kappa$, the energy released \textbf{per reaction} $q$, the total macroscopic cross section $\Sigma_{t}$, and the neutron flux $\phi$,
+        \item <7->  Using (\ref{doppler-micro-xs}) and (\ref{density-temp-relation}) gives a Doppler-broadened, macroscopic, total cross section that accounts for changes in density due to temperature as
         \begin{equation}
-            \frac{d}{dx}\left\lbrack\kappa(T)\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
+            \Sigma_{t}(x) = \frac{\rho_{0}\sigma_{t,0} N_{A}}{A} \frac{T_{0}}{T(x)}
+            \equiv\Sigma_{t,0}\frac{T_{0}}{T(x)}
         \end{equation}
-    \end{itemize}
+        \item <7-> where $ \sigma_{t,0}$ is the total microscopic cross section at $T_{0}$, $N_{A}$ is Avogadro's number, and $A$ is the mass number
+        of the medium.
+        \end{itemize}
 \end{frame}
 
 \begin{frame}{Analytical Benchmark}
-    \pause
     \begin{itemize}
-        \item<2-> Based on 1-D $S_{2}$ transport, the neutron flux is governed by
+        \item <1-> Based on 1-D $S_{2}$ transport, the neutron flux $\phi(x)$ is governed by
         \begin{equation}
             \frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
             \left(\lambda - 1\right)\phi(x) = 0
         \end{equation}
-        \item<3-> where $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ is
-        the combined in-scattering and quasi-static fission source term \cite{analytical-benchmark}.
-        \item<4-> Using (\ref{doppler-micro-xs}) and (\ref{density-temp-relation}) gives a Doppler-broadened, macroscopic, total
-              cross section that accounts for changes in density due to temperature as
-        \begin{equation}\begin{aligned}
-            \Sigma_{t}(x) =&\  \frac{\rho_{0}\sigma_{t,0} N_{A}}{A} \frac{T_{0}}{T(x)}\\
-            =&\  \Sigma_{t,0}\frac{T_{0}}{T(x)} ,
-        \end{aligned}\end{equation}
-        \item<5-> where $ \sigma_{t,0}$ is the total microscopic cross section at $T_{0}$, $N_{A}$ is Avogadro's number, and $A$ is the mass number
-        of the medium.
+        \item <1-> where $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ is the combined in-scattering and quasi-static fission source term \cite{analytical-benchmark}.
+        \item <2->  The conduction equation and its boundary condition govern energy conservation in the slab:
+        \begin{multline}
+            \frac{d}{dx}\left\lbrack\kappa(T)\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
+            \QAND \\
+            - \kappa(T) \frac{dT}{dx} \bigg|_{\pm \frac{L}{2}} + h\left[ T(\pm \frac{L}{2}) - T_{0}\right]
+        \end{multline}
+        \item <2-> where $\kappa$ is the thermal conductivity, $q$ is the energy released \textbf{per reaction}, $\Sigma_{t}$ is the total macroscopic cross section, and $h$ is the heat transfer coefficient.
     \end{itemize}
 \end{frame}
 
 
 \begin{frame}{System Domain, Differential Equations, and Boundary Conditions}
-    \pause
     \begin{figure}[T]
         \centering
-        \includegraphics[width=0.725\linewidth]{figures/1D_Benchmark_Diagram.png}<2->
+        \includegraphics[width=0.725\linewidth]{figures/1D_Benchmark_Diagram.png}<1->
     \end{figure}
     \begin{itemize}
-        \item<3-> The fundamental assumption (ansatz) of \cite{analytical-benchmark}: $T(x)=f\phi(x)$.
-        \item<4-> This imposes two constraints that determine the system heat transfer coefficient $h$ and the
+        \item <2-> The fundamental assumption (ansatz) of \cite{analytical-benchmark}: $T(x)=f\phi(x)$.
+        \item <3-> This imposes two constraints that determine the system heat transfer coefficient $h$ and the
         total microscopic cross section $\sigma_{t,0}$. The solution that satisfies the above is given by
         an elliptical flux shape
         \begin{equation}
             \phi(x) = \phi(0) \sqrt{1 - \frac{(\lambda - 1)P^{2}x^{2}}{L^{2}q^{2}\phi^2(0)}}
         \end{equation}
-        \item<5-> where $P$ is the slab power and $L$ is the slab equilibrium length.
+        \item <3-> where $P$ is the slab power and $L$ is the slab equilibrium length.
     \end{itemize}
 \end{frame}
 
@@ -219,44 +223,44 @@
 \begin{frame}{OpenMC Model}
     \pause
     \begin{itemize}
-        \item<2->Slab geometry divided into N cells, $N=[5, 10, 25, 50, 100, 250, 500, 1000]$.
-        \item<3-> Equilibrium length $L=106.47$ cm in the x-direction, $1$ cm in the y-direction, $1$ cm in the z-direction.
+        \item <2-> Slab geometry divided into N cells, $N=[5, 10, 25, 50, 100, 250, 500, 1000]$.
+        \item <3-> Equilibrium length $L=106.47$ cm in the x-direction, $1$ cm in the y-direction, $1$ cm in the z-direction.
         \begin{itemize}
-            \item<4-> Internal x-planes use transmissive BCs and vacuum BCs for boundary planes.
-            \item<5-> Y and Z-planes reflective BCs to simulate infiniteness.
+            \item <4-> Internal X-planes use transmissive BCs and boundary X-planes use vacuum BCs.
+            \item <5-> Y and Z-planes reflective BCs to simulate infiniteness.
         \end{itemize}
-        \item<6-> Macroscopic XS library via OpenMC's \texttt{XSData} class.
-        \item<7-> This temperature XS library accounts for changes in density due to temperature and uses the same mesh instead of modeling thermal expansion via a deformed mesh. Though this is possible in Cardinal \cite{novak-2023}
-        \item<8-> Library has data for every integer temperature between 308 K and 358 K and rounds to nearest for a lookup between two data points.
-        \item<9-> Library uses one energy group from $0$ to $20$ MeV.
-        \item<10-> $S_{2}$ patch to restrict particle birth direction and scattering direction to only $\pm$x.
-        \item<11->Tallies flux and kappa-fission heating rate.
+        \item <6-> Macroscopic XS library via OpenMC's \texttt{XSData} class. It uses the macroscopic XS to account for changes in the XS due to temperature-density feedback on the equilibrium mesh instead of modeling thermal expansion via mesh deformation.
+        \item <7-> Mesh deformation is possible in Cardinal via DAGMC \cite{novak-2023}.
+        \item <8-> XS library has data for every integer temperature between 308 K and 358 K and rounds to nearest for a lookup between two data points.
+        \item <9-> XS library uses one energy group from $0$ to $20$ MeV.
+        \item <10-> $S_{2}$ patch to restrict particle birth direction and scattering direction to only $\pm$x.
+        \item <11->Tallies flux, kappa-fission heating rate, and $k$-eigenvalue.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{MOOSE Heat Conduction Model}
     \pause
     \begin{itemize}
-        \item<2-> Mesh with identical dimensions as OpenMC model. Allows 1:1 feedback between single physics solves.
-        \item<3-> MOOSE accepts heating rate in each mesh element from OpenMC and solves for temperature distribution.
-        \item<4-> Convective boundary conditions at end points with heat since temperature $T_{0}$.
-        \item<5-> Jacobi Free Newton Krylov solver: $10^{-7}$ absolute tolerance and $10^{-9}$ relative tolerance
+        \item <2-> Mesh with identical dimensions as OpenMC model. Allows 1:1 feedback between single physics solves.
+        \item <3-> MOOSE accepts heating rate in each mesh element from OpenMC and solves for temperature distribution.
+        \item <4-> Convective boundary conditions at end points with heat sink at $T_{0}=293$ K.
+        \item <5-> Jacobi Free Newton Krylov solver: $10^{-7}$ absolute tolerance and $10^{-9}$ relative tolerance.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Coupling, Data Mapping, and Convergence Criteria}
+\begin{frame}{Coupling, Data Mapping \cite{cardinal-tutorials}, and Convergence Criteria}
     \pause
     \begin{figure}[T]
         \centering
         \includegraphics[width=\linewidth]{figures/cardinal_solid.png}<2->
     \end{figure}
     \begin{itemize}
-        \item<3-> 200 Picard Iterations. Robbins-Monro relaxation assisted tally statistics \cite{dufek}.
-        \item<4-> $k$-eigenvalue simulation used 50,000 particles per batch, 50 inactive batches and 100 active batches.
+        \item <3-> 200 Picard Iterations.  Did not use steady state detection, though MOOSE has this capability. Robbins-Monro relaxation assisted tally statistics \cite{dufek}.
+        \item <4-> $k$-eigenvalue simulation used 50,000 particles per batch, 50 inactive batches and 100 active batches.
         \begin{itemize}
-            \item<5-> Shannon Entropy study confirmed this sufficient following criteria from \cite{brown-entropy-2006}.
+            \item <5-> Shannon Entropy study confirmed this sufficient following criteria from \cite{brown-entropy-2006}.
         \end{itemize}
-        \item<6-> Final transport solve with converged temperature used 250,000 particles per batch.
+        \item <6-> Final transport solve with converged temperature used 250,000 particles per batch.
     \end{itemize}
 \end{frame}
 
@@ -297,6 +301,31 @@
     \end{itemize}
 \end{frame}
 
+\begin{frame}{Eigenvalue comparisons across each spatial discretization}
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{@{}ccc@{}}
+            \toprule
+            Resolution &  \keff & (numerical - analytical) [pcm]\\
+            \midrule
+            analytical & 0.29557 & - \\
+            \midrule
+            5    & 0.29624 $\pm$ 0.00003 & \phantom{-}67 $\pm$ 3 \\
+            10   & 0.29581 $\pm$ 0.00004 & \phantom{-}24 $\pm$ 4 \\
+            25   & 0.29563 $\pm$ 0.00004 & \phantom{-}6  $\pm$ 4 \\
+            50   & 0.29553 $\pm$ 0.00004 &           -4  $\pm$ 4 \\
+            100  & 0.29557 $\pm$ 0.00003 & \phantom{-}0  $\pm$ 3 \\
+            250  & 0.29561 $\pm$ 0.00004 & \phantom{-}4  $\pm$ 4 \\
+            500  & 0.29561 $\pm$ 0.00004 & \phantom{-}4  $\pm$ 4 \\
+            1000 & 0.29558 $\pm$ 0.00004 & \phantom{-}1  $\pm$ 4 \\
+        \bottomrule
+        \end{tabular}
+    \end{table}
+    \begin{itemize}
+        \item<2-> \keff is a system-wide parameter, so it converges much faster than flux and is not as dependent on number of cells.
+    \end{itemize}
+\end{frame}
+
 \begin{frame}{Computed to Expected Ratios}
     \vspace*{-0.4cm}
     \begin{figure}[T]
@@ -309,7 +338,7 @@
         \end{subfigure}
     \end{figure}
     \begin{itemize}
-        \item $C/E$ for fine cases ($N=50,100,250,500,1000$). Note the scales of the $y$-axes - the temperature is everywhere being predicted to within 0.006\% (for the coarsest shown temperature mesh) and flux is everywhere being predicted to within 0.05\%.
+        \item $C/E$ for fine cases ($N=50,100,250,500,1000$). Note the scales of the $y$-axes - the temperature is everywhere being predicted to within 0.006\% and flux is everywhere being predicted to within 0.05\%.
     \end{itemize}
 \end{frame}
 
@@ -346,29 +375,43 @@
 \begin{frame}{Individual Flux $C/E$ with $2\sigma$ Error Bars for Fine Cases}
     \begin{figure}[T]
         \centering
-        \includegraphics[width=0.8\linewidth]{figures/1000_flux_CE_error_bars}
+        \includegraphics[width=0.7\linewidth]{figures/1000_flux_CE_error_bars}
     \end{figure}
     \begin{itemize}
         \item $C/E$ in blue with $2\sigma$ error bars (gray bounded by purple). $1000$ cells.
     \end{itemize}
 \end{frame}
 
-
-\begin{frame}{Future and companion work}
+\begin{frame}
+\frametitle{Why do the error bars appear on the same order despite cell refinement?}
+    \pause
+    \begin{figure}[T]
+        \centering
+        \begin{subfigure}{0.32\textwidth}
+            \includegraphics[width=\linewidth]{figures/50_flux_CE_error_bars.png}
+        \end{subfigure}
+        \begin{subfigure}{0.32\textwidth}
+            \includegraphics[width=\linewidth]{figures/100_flux_CE_error_bars.png}
+        \end{subfigure}
+        \begin{subfigure}{0.32\textwidth}
+            \includegraphics[width=\linewidth]{figures/250_flux_CE_error_bars}
+        \end{subfigure}
+        \begin{subfigure}{0.32\textwidth}
+            \includegraphics[width=\linewidth]{figures/500_flux_CE_error_bars}
+        \end{subfigure}
+        \begin{subfigure}{0.32\textwidth}
+            \includegraphics[width=\linewidth]{figures/1000_flux_CE_error_bars}
+        \end{subfigure}
+    \end{figure}
     \begin{itemize}
-        \item discuss using nek, mention \cite{aya2023}
+        \item <3-> MFP $\in[239,278]$ cm ($L=106.47$ cm). Spatially uniform birth distribution.
+        \item <4-> Nearly all points fall within $2\sigma$ (95\% Confidence Interval), meaning that Cardinal is computing the correct flux within statistical uncertainty.
     \end{itemize}
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
 %% Bibliography
 %%----------------------------------------------------------------------------%%
-
-\begin{withoutheadline}
-\begin{frame}[allowframebreaks]{Bibliography}
-    \printbibliography
-\end{frame}
-\end{withoutheadline}
 
 \begin{withoutheadline}
     \begin{frame}{Acknowledgements}
@@ -390,6 +433,12 @@
             \includegraphics[width=0.75\linewidth]{figures/moose_logo.png}
         \end{figure}
     \end{frame}
+\end{withoutheadline}
+
+\begin{withoutheadline}
+\begin{frame}[allowframebreaks]{Bibliography}
+    \printbibliography
+\end{frame}
 \end{withoutheadline}
 
 \appendix
@@ -450,7 +499,7 @@
             \QAND \\
             \frac{d}{dx}\left\lbrack \phi(x)\frac{d\phi(x)}{dx} \right\rbrack +
             \left(\Sigma_{t,0}\frac{T_{0}}{f}\right)^2 \left(\lambda - 1\right) = 0
-        \end{multline} 
+        \end{multline}
         \item In order to make the ansatz hold, this implies that
         \begin{equation}
             \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{f^3} = \left(\Sigma_{t,0}\frac{T_{0}}{f}\right)^2 \left(\lambda - 1\right)
