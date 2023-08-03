@@ -1,5 +1,5 @@
 \documentclass[9pt,t]{beamer}
-\usetheme{Wisconsin}
+\usetheme[white]{Wisconsin}
 \usepackage[utf8]{inputenc}
 \setbeamertemplate{page number in head/foot}[totalframenumber]
 \setbeamerfont{title}{size=\LARGE}
@@ -7,6 +7,7 @@
 \setbeamerfont{block body}{size=\footnotesize}
 \setbeamerfont{author}{size=\LARGE}
 \setbeamerfont{date}{size=\Large}
+\setbeamerfont{institute}{size=\large}
 \setlength{\leftmargini}{0pt}
 
 %subcaptions
@@ -43,8 +44,8 @@
 % hypersetup
 \usepackage{hyperref}
 \hypersetup{colorlinks,
-            linkcolor = white,
-            citecolor = white,
+            linkcolor = black,
+            citecolor = black,
             urlcolor = cyan
 }
 
@@ -70,11 +71,11 @@
 \usepackage[sorting=none]{biblatex} %Imports biblatex package and cites in order of appearance
 \addbibresource{mc2023_pres.bib} %Import the bibliography file
 % make all font colors white
-\setbeamercolor{bibliography item}{fg=white}
-\setbeamercolor{bibliography entry author}{fg=white}
-\setbeamercolor{bibliography entry title}{fg=white}
-\setbeamercolor{bibliography entry location}{fg=white}
-\setbeamercolor{bibliography entry note}{fg=white}
+\setbeamercolor{bibliography item}{fg=black}
+\setbeamercolor{bibliography entry author}{fg=black}
+\setbeamercolor{bibliography entry title}{fg=black}
+\setbeamercolor{bibliography entry location}{fg=black}
+\setbeamercolor{bibliography entry note}{fg=black}
 % adds numeric labels linked to bib entries
 \setbeamertemplate{bibliography item}{\insertbiblabel}
 
@@ -91,10 +92,11 @@
 % frame breaks with same title
 \setbeamertemplate{frametitle continuation}[from second][]
 
-\title{Verification of the Cardinal Multiphysics Solver for}
-\subtitle{1-D Coupled Heat Transfer and Neutron Transport}
-\author{Lewis Gross, April Novak, Patrick Shriwise, and Paul Wilson\vspace*{-1cm}}
+\title{Verification of the Cardinal Multiphysics Solver}
+\subtitle{for 1-D Coupled Heat Transfer and Neutron Transport}
+\author{Lewis I.~Gross$^{1}$, April J.~Novak$^{2,3}$, Patrick Shriwise$^{3,1}$, and Paul P.H.~Wilson$^{1}$}
 \date{August 15, 2022}
+\institute{[1] University of Wisconsin-Madison [2] University of Illinois Urbana-Champaign [3] Argonne National Lab }
 %%----------------------------------------------------------------------------%%
 \begin{document}
 
@@ -104,6 +106,7 @@
 \end{frame}
 \end{withoutheadline}
 
+\author{Lewis Gross, April Novak, Patrick Shriwise, and Paul Wilson} % reset author so affiliations don't show up in footer
 %%----------------------------------------------------------------------------%%
 %% Overview
 %%----------------------------------------------------------------------------%%
@@ -131,18 +134,18 @@
 \begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V}
     \pause
     \begin{itemize}
-        % \item High Fidelity multiphysics simulations are the future of reactor design.
-        \item <2-> Many new emerging tools have great potential, but they require Verification and Validation (V\&V).
-        \item <3-> Verification via analytical benchmarks allows measurement of true error for a numerical simulation.
-        \item <4-> Greisheimer and Kooreman presented a 1-D analytical benchmark that features coupled heat transfer and neutron transport \cite{analytical-benchmark}.
-        \item <5-> Cardinal \cite{novak2022-cardinal} our software choice to model this benchmark couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}.
+        \item <2-> Many new emerging multiphysics tools.
+        \item <3-> All software tools require Verification and Validation (V\&V).
+        \item <4-> Analytical benchmarks allow measurement of true error.
+        \item <5-> Greisheimer and Kooreman presented a 1-D analytical benchmark featuring coupled heat transfer and neutron transport \cite{analytical-benchmark}.
+        \item <6-> Cardinal \cite{novak2022-cardinal} our software choice to model this benchmark couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Cardinal's connection to the MOOSE Framework}
     \begin{figure}[H]
         \centering
-        \includegraphics[width=0.9\linewidth]{figures/framework.png}
+        \includegraphics[width=\linewidth]{figures/framework.png}
     \end{figure}
 \end{frame}
 
@@ -187,12 +190,12 @@
             \frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
             \left(\lambda - 1\right)\phi(x) = 0
         \end{equation}
-        \item <1-> where $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ is the combined in-scattering and quasi-static fission source term \cite{analytical-benchmark}.
-        \item <2->  The conduction equation and its boundary condition govern energy conservation in the slab:
+        \item <1-> with $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ \cite{analytical-benchmark}.
+        \item <2->  The conduction equation governs energy conservation in the slab:
         \begin{multline}
             \frac{d}{dx}\left\lbrack\kappa(T)\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
-            \QAND \\
-            - \kappa(T) \frac{dT}{dx} \bigg|_{\pm \frac{L}{2}} + h\left[ T(\pm \frac{L}{2}) - T_{0}\right]
+            \QWITH \\
+            -\kappa(T) \frac{dT}{dx} \bigg|_{\pm \frac{L}{2}} = \pm h\left[ T(\pm \frac{L}{2}) - T_{0}\right]
         \end{multline}
         \item <2-> where $\kappa$ is the thermal conductivity, $q$ is the energy released \textbf{per reaction}, $\Sigma_{t}$ is the total macroscopic cross section, and $h$ is the heat transfer coefficient.
     \end{itemize}
@@ -200,15 +203,14 @@
 
 
 \begin{frame}{System Domain, Differential Equations, and Boundary Conditions}
+    \vspace*{-0.45cm}
     \begin{figure}[T]
         \centering
         \includegraphics[width=\linewidth]{figures/1D_Benchmark_Diagram.png}<1->
     \end{figure}
     \begin{itemize}
         \item <2-> The fundamental assumption (ansatz) of \cite{analytical-benchmark}: $T(x)=f\phi(x)$.
-        \item <3-> This imposes two constraints that determine the system heat transfer coefficient $h$ and the
-        total microscopic cross section $\sigma_{t,0}$. The solution that satisfies the above is given by
-        an elliptical flux shape
+        \item <3-> This imposes two constraints that determine $h$ and $\sigma_{t,0}$. The solution:
         \begin{equation}
             \phi(x) = \phi(0) \sqrt{1 - \frac{(\lambda - 1)P^{2}x^{2}}{L^{2}q^{2}\phi^2(0)}}
         \end{equation}
@@ -416,8 +418,8 @@
 \begin{withoutheadline}
     \begin{frame}{Acknowledgements}
         \begin{itemize}
-            \item Benchmark authors: David P. Greisheimer and Gabriel Kooreman
-            \item Co-authors: April J. Novak, Patrick Shriwise, Paul P.H. Wilson
+            \item Benchmark authors: David P.~Greisheimer and Gabriel Kooreman
+            \item Co-authors: April J.~Novak, Patrick Shriwise, Paul P.H.~Wilson
             \item OpenMC, Cardinal, and MOOSE teams!
         \end{itemize}
         \begin{figure}[H]
@@ -438,8 +440,12 @@
 \begin{withoutheadline}
     \begin{frame}{Questions?}
         \begin{itemize}
-            \item Cardinal website: {\tt \color{blue}https://cardinal.cels.anl.gov}
-            \item Cardinal repository: {\tt\color{blue} https://github.com/neams-th-coe/cardinal.git}
+            \item OpenMC website: {\tt \color{cyan}https://openmc.org/}
+            \item OpenMC repository: {\tt\color{cyan} https://github.com/openmc-dev/openmc}
+            \item Cardinal website: {\tt \color{cyan}https://cardinal.cels.anl.gov}
+            \item Cardinal repository: {\tt\color{cyan} https://github.com/neams-th-coe/cardinal.git}
+            \item MOOSE website:{\tt \color{cyan}https://mooseframework.inl.gov/}
+            \item MOOSE repository: {\tt\color{cyan} https://github.com/idaholab/moose}
         \end{itemize}
     \end{frame}
 \end{withoutheadline}
