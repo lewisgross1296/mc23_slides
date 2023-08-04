@@ -124,25 +124,23 @@
 \begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V}
     \begin{figure}[H]
         \centering
-        \includegraphics[width=0.875\linewidth]{figures/assembly_solid_temp_fine.png}
+        \includegraphics[width=\linewidth]{figures/cardinal_apps.png}
     \end{figure}
-    \begin{itemize}
-        \item Full-core multiphysics model of an HTGR using Cardinal: OpenMC power (left) and MOOSE solid temperature (right) \cite{novak2022-cardinal}.
-    \end{itemize}
 \end{frame}
 
 \begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V}
     \pause
     \begin{itemize}
-        \item <2-> Many new emerging multiphysics tools.
+        \item <2-> Many new emerging multiphysics tools aim to model advanced reactors.
         \item <3-> All software tools require Verification and Validation (V\&V).
         \item <4-> Analytical benchmarks allow measurement of true error.
         \item <5-> Greisheimer and Kooreman presented a 1-D analytical benchmark featuring coupled heat transfer and neutron transport \cite{analytical-benchmark}.
-        \item <6-> Cardinal \cite{novak2022-cardinal} our software choice to model this benchmark couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}.
+        \item <6-> Cardinal \cite{novak2022-cardinal} -- our software choice to model this benchmark -- couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Cardinal's connection to the MOOSE Framework}
+    \vspace*{-0.35cm}
     \begin{figure}[H]
         \centering
         \includegraphics[width=\linewidth]{figures/framework.png}
@@ -191,7 +189,7 @@
             \left(\lambda - 1\right)\phi(x) = 0
         \end{equation}
         \item <1-> with $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ \cite{analytical-benchmark}.
-        \item <2->  The conduction equation governs energy conservation in the slab:
+        \item <2->  The conduction equation governs energy conservation in the slab
         \begin{multline}
             \frac{d}{dx}\left\lbrack\kappa(T)\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
             \QWITH \\
@@ -225,26 +223,32 @@
 \begin{frame}{OpenMC Model}
     \pause
     \begin{itemize}
-        \item <2-> Slab geometry divided into N cells, $N=[5, 10, 25, 50, 100, 250, 500, 1000]$.
-        \item <3-> Equilibrium length $L=106.47$ cm in the x-direction, $1$ cm in the y-direction, $1$ cm in the z-direction.
+        \item <2-> Equilibrium length $L=106.47$ cm in the x-direction, $1$ cm in the y-direction, $1$ cm in the z-direction.
+        \item <3-> Divided into N Cartesian cells, $N=[5, 10, 25, 50, 100, 250, 500, 1000]$.
         \begin{itemize}
             \item <4-> Internal X-planes use transmissive BCs and boundary X-planes use vacuum BCs.
             \item <5-> Y and Z-planes reflective BCs to simulate infiniteness.
         \end{itemize}
-        \item <6-> Macroscopic XS library via OpenMC's \texttt{XSData} class. It uses the macroscopic XS to account for changes in the XS due to temperature-density feedback on the equilibrium mesh instead of modeling thermal expansion via mesh deformation.
-        \item <7-> Mesh deformation is possible in Cardinal via DAGMC \cite{novak-2023}.
-        \item <8-> XS library has data for every integer temperature between 308 K and 358 K and rounds to nearest for a lookup between two data points.
-        \item <9-> XS library uses one energy group from $0$ to $20$ MeV.
-        \item <10-> $S_{2}$ patch to restrict particle birth direction and scattering direction to only $\pm$x.
-        \item <11->Tallies flux, kappa-fission heating rate, and $k$-eigenvalue.
+        \item <6-> $S_{2}$ patch to restrict particle birth direction and scattering direction to only $\pm$x.
+        \item <7-> Custom XS library via OpenMC's \texttt{XSData} class.
+        \begin{itemize}
+            \item <8-> Uses analytical, $\Sigma(x)$, instead of explicitly modeling thermal expansion via mesh deformation.
+            \item <9-> Mesh deformation is possible in Cardinal via DAGMC \cite{novak-2023}.
+        \end{itemize}
+        \item <10-> XS library contains integer temperatures between 308 K and 358 K.
+        \begin{itemize}
+            \item <11->Rounds to the nearest temperature for a lookup between two data points.
+        \end{itemize}
+        \item <12->XS library uses one energy group from $0$ to $20$ MeV.
+        \item <13-> Flux, kappa-fission, and $k$-eigenvalue tallies.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{MOOSE Heat Conduction Model}
     \pause
     \begin{itemize}
-        \item <2-> Mesh with identical dimensions as OpenMC model. Allows 1:1 feedback between single physics solves.
-        \item <3-> MOOSE accepts heating rate in each mesh element from OpenMC and solves for temperature distribution.
+        \item <2-> Mesh with identical dimensions as OpenMC model. Allows 1:1 feedback.
+        \item <3-> MOOSE solves for temperature distribution.
         \item <4-> Convective boundary conditions at end points with heat sink at $T_{0}=293$ K.
         \item <5-> Jacobi Free Newton Krylov solver: $10^{-7}$ absolute tolerance and $10^{-9}$ relative tolerance.
     \end{itemize}
@@ -257,10 +261,10 @@
         \includegraphics[width=\linewidth]{figures/cardinal_solid.png}<2->
     \end{figure}
     \begin{itemize}
-        \item <3-> 200 Picard Iterations.  Did not use steady state detection, though MOOSE has this capability. Robbins-Monro relaxation assisted tally statistics \cite{dufek}.
+        \item <3-> 200 Picard Iterations. Robbins-Monro relaxation assisted tally statistics \cite{dufek}.
         \item <4-> $k$-eigenvalue simulation used 50,000 particles per batch, 50 inactive batches and 100 active batches.
         \begin{itemize}
-            \item <5-> Shannon Entropy study confirmed this sufficient following criteria from \cite{brown-entropy-2006}.
+            \item <5-> Shannon Entropy study confirmed sufficiency following criteria from \cite{brown-entropy-2006}.
         \end{itemize}
         \item <6-> Final transport solve with converged temperature used 250,000 particles per batch.
     \end{itemize}
@@ -272,6 +276,7 @@
 %%----------------------------------------------------------------------------%%
 \section{Results and Discussion}
 \begin{frame}{Outputs and Comparisons}
+    \pause
     \begin{figure}[T]
         \hspace*{-1cm}
         \begin{subfigure}[b]{0.495\linewidth}
@@ -289,6 +294,7 @@
 \end{frame}
 
 \begin{frame}{Solution $L_{2}$ Error Norms}
+    \pause
     \begin{figure}[T]
         \hspace*{-0.9cm}
         \begin{subfigure}{0.4995\linewidth}
@@ -299,7 +305,7 @@
         \end{subfigure}
     \end{figure}
     \begin{itemize}
-        \item Error norms as a function of heat conduction mesh element count and OpenMC cell count, respectively.
+        \item Error norms as a function of heat conduction mesh element count and OpenMC cell count, respectively. Temperature slope $-0.9986$ ($R^2\approx1.0$).
     \end{itemize}
 \end{frame}
 
@@ -330,6 +336,7 @@
 
 \begin{frame}{Computed to Expected Ratios}
     \vspace*{-0.4cm}
+    \pause
     \begin{figure}[T]
         \hspace*{-0.87cm}
         \begin{subfigure}{0.495\linewidth}
@@ -440,12 +447,12 @@
 \begin{withoutheadline}
     \begin{frame}{Questions?}
         \begin{itemize}
-            \item OpenMC website: {\tt \color{cyan}https://openmc.org/}
-            \item OpenMC repository: {\tt\color{cyan} https://github.com/openmc-dev/openmc}
-            \item Cardinal website: {\tt \color{cyan}https://cardinal.cels.anl.gov}
-            \item Cardinal repository: {\tt\color{cyan} https://github.com/neams-th-coe/cardinal.git}
-            \item MOOSE website:{\tt \color{cyan}https://mooseframework.inl.gov/}
-            \item MOOSE repository: {\tt\color{cyan} https://github.com/idaholab/moose}
+            \item OpenMC website: \href{https://openmc.org/}{https://openmc.org/}
+            \item OpenMC repository: \href{https://github.com/openmc-dev/openmc}{https://github.com/openmc-dev/openmc}
+            \item Cardinal website: \href{https://cardinal.cels.anl.gov}{https://cardinal.cels.anl.gov}
+            \item Cardinal repository: \href{https://github.com/neams-th-coe/cardinal.git}{https://github.com/neams-th-coe/cardinal.git}
+            \item MOOSE website: \href{https://mooseframework.inl.gov/}{https://mooseframework.inl.gov/}
+            \item MOOSE repository: \href{https://github.com/idaholab/moose}{https://github.com/idaholab/moose}
         \end{itemize}
     \end{frame}
 \end{withoutheadline}
@@ -458,6 +465,12 @@
 
 \appendix
 
+\begin{frame}{Benchmark Canonical Parameters Values}
+    \begin{figure}[T]
+        \centering
+        \includegraphics[width=\linewidth]{figures/benchmark_values.png}
+    \end{figure}
+\end{frame}
 
 \begin{frame}{Coarse $C/E$ results}
     \begin{figure}[T]
@@ -472,69 +485,6 @@
         \item $C/E$ for coarse cases ($N=5,10,25$). The coarse cases' errors are a few orders of magnitude larger than the fine cases. A significant improvement in agreement can be seen between each coarse case.
     \end{itemize}
 \end{frame}
-
-
-\begin{withoutheadline}
-\begin{frame}[allowframebreaks]{Ensuring Validity of the Fundamental Ansatz}
-    \begin{itemize}
-        \item Taking the heat conduction ODE
-        \begin{equation}
-            \frac{d}{dx}\left\lbrack\kappa(T(x))\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
-        \end{equation}
-        \item and using the thermal conductivity and cross section temperature dependence
-        \begin{equation}
-            \frac{d}{dx}\left\lbrack\kappa_{0} T(x)\frac{dT(x)}{dx}\right\rbrack + q\Sigma_{t,0}\frac{T_{0}}{T(x)}\phi(x) = 0
-        \end{equation}
-        \item Taking the neutron transport ODE
-        \begin{equation}
-            \frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
-            \left(\lambda - 1\right)\phi(x) = 0
-        \end{equation}
-        \item and inserting cross section temperature dependence gives
-        \begin{equation}
-            \frac{d}{dx}\left\lbrack  \frac{T(x)}{\Sigma_{t,0}T_{0}} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t,0}\frac{T_{0}}{T(x)}
-            \left(\lambda - 1\right)\phi(x) = 0
-        \end{equation}
-        \item these two equations are very close, and after some re-arranging, they look even closer
-        \begin{multline}
-            \frac{d}{dx}\left\lbrack T(x)\frac{dT(x)}{dx}\right\rbrack + \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{T(x)}\phi(x) = 0
-            \QAND \\
-            \frac{d}{dx}\left\lbrack  \frac{T(x)}{\Sigma_{t,0}T_{0}} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t,0}\frac{T_{0}}{T(x)}
-            \left(\lambda - 1\right)\phi(x) = 0
-        \end{multline}
-        \item Applying the ansatz $T(x) = f\phi(x)$ gives
-        \begin{multline}
-            \frac{d}{dx}\left\lbrack f^2\phi(x)\frac{d\phi(x)}{dx}\right\rbrack + \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{f} = 0
-            \QAND \\
-            \frac{d}{dx}\left\lbrack  \frac{f\phi(x)}{\Sigma_{t,0}T_{0}} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t,0}\frac{T_{0}}{f}
-            \left(\lambda - 1\right) = 0
-        \end{multline}\vspace{-0.5cm}
-        \begin{multline}
-            \frac{d}{dx}\left\lbrack \phi(x)\frac{d\phi(x)}{dx}\right\rbrack + \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{f^3} = 0
-            \QAND \\
-            \frac{d}{dx}\left\lbrack \phi(x)\frac{d\phi(x)}{dx} \right\rbrack +
-            \left(\Sigma_{t,0}\frac{T_{0}}{f}\right)^2 \left(\lambda - 1\right) = 0
-        \end{multline}
-        \item In order to make the ansatz hold, this implies that
-        \begin{equation}
-            \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{f^3} = \left(\Sigma_{t,0}\frac{T_{0}}{f}\right)^2 \left(\lambda - 1\right)
-            \QOR \Sigma_{t,0} = \frac{q}{(\lambda-1)\kappa_{0} T_{0}f}
-        \end{equation}
-        which is a condition for the total cross section based on system parameters.
-        \item A similar process of matching coefficients
-        must be applied to the boundary conditions to gain a condition for the heat transfer coefficient. Though, at this point, realize that
-        \begin{equation}
-            \frac{d}{dx}\left\lbrack \phi(x)\frac{d\phi(x)}{dx} \right\rbrack +
-            \left(\Sigma_{t,0}\frac{T_{0}}{f}\right)^2 \left(\lambda - 1\right) = 0
-        \end{equation}
-        \item is a separable ODE that can be solved for an analytical solution. The result for the heat transfer coefficient is given by
-        \begin{equation}
-            h \left(\sqrt{\frac{L(\lambda-1)}{\kappa_{0}P}} - \frac{2T_{0}}{P} \right) = 1
-        \end{equation}
-    \end{itemize}
-\end{frame}
-\end{withoutheadline}
-
 
 \begin{withoutheadline}
 \begin{frame}[allowframebreaks]{Deriving the Benchmark ODE for $\phi(x)$}
@@ -660,5 +610,66 @@
     \end{itemize}
 \end{frame}
 \end{withoutheadline}
+
+\begin{withoutheadline}
+    \begin{frame}[allowframebreaks]{Ensuring Validity of the Fundamental Ansatz}
+        \begin{itemize}
+            \item Taking the heat conduction ODE
+            \begin{equation}
+                \frac{d}{dx}\left\lbrack\kappa(T(x))\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
+            \end{equation}
+            nd using the thermal conductivity and cross section temperature dependence
+            \begin{equation}
+                \frac{d}{dx}\left\lbrack\kappa_{0} T(x)\frac{dT(x)}{dx}\right\rbrack + q\Sigma_{t,0}\frac{T_{0}}{T(x)}\phi(x) = 0
+            \end{equation}
+            \item Taking the neutron transport ODE
+            \begin{equation}
+                \frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
+                \left(\lambda - 1\right)\phi(x) = 0
+            \end{equation}
+            and inserting cross section temperature dependence gives
+            \begin{equation}
+                \frac{d}{dx}\left\lbrack  \frac{T(x)}{\Sigma_{t,0}T_{0}} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t,0}\frac{T_{0}}{T(x)}
+                \left(\lambda - 1\right)\phi(x) = 0
+            \end{equation}
+            \item These two equations are very close, and after some re-arranging, they look even closer
+            \begin{multline}
+                \frac{d}{dx}\left\lbrack T(x)\frac{dT(x)}{dx}\right\rbrack + \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{T(x)}\phi(x) = 0
+                \QAND \\
+                \frac{d}{dx}\left\lbrack  \frac{T(x)}{\Sigma_{t,0}T_{0}} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t,0}\frac{T_{0}}{T(x)}
+                \left(\lambda - 1\right)\phi(x) = 0
+            \end{multline}
+            \item Applying the ansatz $T(x) = f\phi(x)$ gives
+            \begin{multline}
+                \frac{d}{dx}\left\lbrack f^2\phi(x)\frac{d\phi(x)}{dx}\right\rbrack + \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{f} = 0
+                \QAND \\
+                \frac{d}{dx}\left\lbrack  \frac{f\phi(x)}{\Sigma_{t,0}T_{0}} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t,0}\frac{T_{0}}{f}
+                \left(\lambda - 1\right) = 0
+            \end{multline}\vspace{-0.5cm}
+            \begin{multline}
+                \frac{d}{dx}\left\lbrack \phi(x)\frac{d\phi(x)}{dx}\right\rbrack + \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{f^3} = 0
+                \QAND \\
+                \frac{d}{dx}\left\lbrack \phi(x)\frac{d\phi(x)}{dx} \right\rbrack +
+                \left(\Sigma_{t,0}\frac{T_{0}}{f}\right)^2 \left(\lambda - 1\right) = 0
+            \end{multline}
+            \item In order to make the ansatz hold, this implies that
+            \begin{equation}
+                \frac{q\Sigma_{t,0}}{\kappa_{0}}\frac{T_{0}}{f^3} = \left(\Sigma_{t,0}\frac{T_{0}}{f}\right)^2 \left(\lambda - 1\right)
+                \QOR \Sigma_{t,0} = \frac{q}{(\lambda-1)\kappa_{0} T_{0}f}
+            \end{equation}
+            which is a condition for the total cross section based on system parameters.
+            \item A similar process of matching coefficients
+            must be applied to the boundary conditions to gain a condition for the heat transfer coefficient. Though, at this point, realize that
+            \begin{equation}
+                \frac{d}{dx}\left\lbrack \phi(x)\frac{d\phi(x)}{dx} \right\rbrack +
+                \left(\Sigma_{t,0}\frac{T_{0}}{f}\right)^2 \left(\lambda - 1\right) = 0
+            \end{equation}
+            \item is a separable ODE that can be solved for an analytical solution. The result for the heat transfer coefficient is given by
+            \begin{equation}
+                h \left(\sqrt{\frac{L(\lambda-1)}{\kappa_{0}P}} - \frac{2T_{0}}{P} \right) = 1
+            \end{equation}
+        \end{itemize}
+    \end{frame}
+    \end{withoutheadline}
 
 \end{document}

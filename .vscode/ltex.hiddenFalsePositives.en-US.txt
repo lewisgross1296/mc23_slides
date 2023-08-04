@@ -1,0 +1,1 @@
+{"rule":"PHRASE_REPETITION","sentence":"^\\QSolution \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q Error Norms Error norms as a function of heat conduction mesh element count and OpenMC cell count, respectively.\\E$"}
