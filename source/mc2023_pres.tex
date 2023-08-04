@@ -121,7 +121,19 @@
 %% Section 1
 %%----------------------------------------------------------------------------%%
 \section{Introduction}
-\begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V}
+
+\begin{frame}{Cardinal: A Modern Multiphysics Software \textbf{TODO better picture}}
+    \vspace*{-0.35cm}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/framework.png}
+    \end{figure}
+    \begin{itemize}
+        \item Cardinal \cite{novak2022-cardinal} wraps OpenMC \cite{openmc} and NekRS \cite{nekrs} into the MOOSE framework \cite{lindsay2022moose}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Application of Cardinal to Model Advanced Reactors}
     \begin{figure}[H]
         \centering
         \includegraphics[width=\linewidth]{figures/cardinal_apps.png}
@@ -131,20 +143,15 @@
 \begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V}
     \pause
     \begin{itemize}
-        \item <2-> Many new emerging multiphysics tools aim to model advanced reactors.
-        \item <3-> All software tools require Verification and Validation (V\&V).
-        \item <4-> Analytical benchmarks allow measurement of true error.
-        \item <5-> Greisheimer and Kooreman presented a 1-D analytical benchmark featuring coupled heat transfer and neutron transport \cite{analytical-benchmark}.
-        \item <6-> Cardinal \cite{novak2022-cardinal} -- our software choice to model this benchmark -- couples OpenMC \cite{openmc} neutronics and NekRS \cite{nekrs} CFD into the MOOSE framework \cite{lindsay2022moose}.
+        % \item <2-> Many new emerging multiphysics tools aim to model advanced reactors.
+        \item <2-> All software tools require Verification and Validation (V\&V).
+        \begin{itemize}
+            \item <3-> Verification is the comparison of simulations to other codes or to physics theory.
+            \item <4-> Validation is the comparison of simulations to experimental results.
+        \end{itemize}
+        \item <5-> Verification against analytical benchmarks allow measurement of true error.
+        \item <6-> Greisheimer and Kooreman presented a 1-D analytical benchmark featuring coupled heat transfer and neutron transport \cite{analytical-benchmark}.
     \end{itemize}
-\end{frame}
-
-\begin{frame}{Cardinal's connection to the MOOSE Framework}
-    \vspace*{-0.35cm}
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=\linewidth]{figures/framework.png}
-    \end{figure}
 \end{frame}
 
 
@@ -166,10 +173,10 @@
             \begin{equation} \label{density-temp-relation}
                 \rho(x) =  \rho_{0} \sqrt{\frac{T_{0}}{T(x)}}
             \end{equation}
-            \item <6-> Linear temperature dependence for thermal conductivity
-            \begin{equation}\label{thermal-conductivity-temp-relation}
-                \kappa(x) = \kappa_{0} T(x)
-            \end{equation}
+            % \item <6-> Linear temperature dependence for thermal conductivity
+            % \begin{equation}\label{thermal-conductivity-temp-relation}
+            %     \kappa(x) = \kappa_{0} T(x)
+            % \end{equation}
         \end{itemize}\vspace*{-0.4cm}
         \item <7->  Using (\ref{doppler-micro-xs}) and (\ref{density-temp-relation}) gives a Doppler-broadened, macroscopic, total cross section that accounts for changes in density due to temperature as
         \begin{equation}
@@ -181,30 +188,30 @@
         \end{itemize}
 \end{frame}
 
-\begin{frame}{Analytical Benchmark}
-    \begin{itemize}
-        \item <1-> Based on 1-D $S_{2}$ transport, the neutron flux $\phi(x)$ is governed by
-        \begin{equation}
-            \frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
-            \left(\lambda - 1\right)\phi(x) = 0
-        \end{equation}
-        \item <1-> with $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ \cite{analytical-benchmark}.
-        \item <2->  The conduction equation governs energy conservation in the slab
-        \begin{multline}
-            \frac{d}{dx}\left\lbrack\kappa(T)\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
-            \QWITH \\
-            -\kappa(T) \frac{dT}{dx} \bigg|_{\pm \frac{L}{2}} = \pm h\left[ T(\pm \frac{L}{2}) - T_{0}\right]
-        \end{multline}
-        \item <2-> where $\kappa$ is the thermal conductivity, $q$ is the energy released \textbf{per reaction}, $\Sigma_{t}$ is the total macroscopic cross section, and $h$ is the heat transfer coefficient.
-    \end{itemize}
-\end{frame}
+% \begin{frame}{Analytical Benchmark}
+%     \begin{itemize}
+%         \item <1-> Based on 1-D $S_{2}$ transport, the neutron flux $\phi(x)$ is governed by
+%         \begin{equation}
+%             \frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
+%             \left(\lambda - 1\right)\phi(x) = 0
+%         \end{equation}
+%         \item <1-> with $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ \cite{analytical-benchmark}.
+%         \item <2->  The conduction equation governs energy conservation in the slab
+%         \begin{multline}
+%             \frac{d}{dx}\left\lbrack\kappa(T)\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
+%             \QWITH \\
+%             -\kappa(T) \frac{dT}{dx} \bigg|_{\pm \frac{L}{2}} = \pm h\left[ T(\pm \frac{L}{2}) - T_{0}\right]
+%         \end{multline}
+%         \item <2-> where $\kappa$ is the thermal conductivity, $q$ is the energy released \textbf{per reaction}, $\Sigma_{t}$ is the total macroscopic cross section, and $h$ is the heat transfer coefficient.
+%     \end{itemize}
+% \end{frame}
 
 
 \begin{frame}{System Domain, Differential Equations, and Boundary Conditions}
     \vspace*{-0.45cm}
     \begin{figure}[T]
         \centering
-        \includegraphics[width=\linewidth]{figures/1D_Benchmark_Diagram.png}<1->
+        \includegraphics[width=0.8\linewidth]{figures/1D_Benchmark_Diagram.png}<1->
     \end{figure}
     \begin{itemize}
         \item <2-> The fundamental assumption (ansatz) of \cite{analytical-benchmark}: $T(x)=f\phi(x)$.
@@ -212,7 +219,7 @@
         \begin{equation}
             \phi(x) = \phi(0) \sqrt{1 - \frac{(\lambda - 1)P^{2}x^{2}}{L^{2}q^{2}\phi^2(0)}}
         \end{equation}
-        \item <3-> where $P$ is the slab power and $L$ is the slab equilibrium length.
+        \item <3-> where $P$ is the slab power, $L$ is the slab equilibrium length, and $\lambda = (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$.
     \end{itemize}
 \end{frame}
 
@@ -223,34 +230,30 @@
 \begin{frame}{OpenMC Model}
     \pause
     \begin{itemize}
-        \item <2-> Equilibrium length $L=106.47$ cm in the x-direction, $1$ cm in the y-direction, $1$ cm in the z-direction.
-        \item <3-> Divided into N Cartesian cells, $N=[5, 10, 25, 50, 100, 250, 500, 1000]$.
+        \item<2-> Patch to mimic $S_{2}$ transport, which restricts particle direction to $\pm$x:
         \begin{itemize}
-            \item <4-> Internal X-planes use transmissive BCs and boundary X-planes use vacuum BCs.
-            \item <5-> Y and Z-planes reflective BCs to simulate infiniteness.
+            \item<3-> Source direction distribution only $\pm$ x. (simulation script)
+            \item<4-> Scattering samples to either continue forward or backscatter. (source code)
+            \item<5-> Particles born from fission also have direction distribution of $\pm$ x. (source code)
         \end{itemize}
-        \item <6-> $S_{2}$ patch to restrict particle birth direction and scattering direction to only $\pm$x.
-        \item <7-> Custom XS library via OpenMC's \texttt{XSData} class.
+        \item<6-> Custom one-group XS temperature library
         \begin{itemize}
-            \item <8-> Uses analytical, $\Sigma(x)$, instead of explicitly modeling thermal expansion via mesh deformation.
-            \item <9-> Mesh deformation is possible in Cardinal via DAGMC \cite{novak-2023}.
+            \item<7-> Uses analytical $\Sigma(T)$, instead of explicitly modeling thermal expansion.
+            \item<8-> Contains data for integer temperatures $T\in[308,358]$ K.
+            \item<9-> Rounds to nearest temperature for lookup between two data points.
         \end{itemize}
-        \item <10-> XS library contains integer temperatures between 308 K and 358 K.
-        \begin{itemize}
-            \item <11->Rounds to the nearest temperature for a lookup between two data points.
-        \end{itemize}
-        \item <12->XS library uses one energy group from $0$ to $20$ MeV.
-        \item <13-> Flux, kappa-fission, and $k$-eigenvalue track length tallies.
+        \item<10-> Mesh deformation is possible in Cardinal via DAGMC \cite{novak-2023}, but this was not available at the time of the simulation.
+        \item<11-> Geometry uses equilibrium length provided from the benchmark $L=106.47$ cm in the x-direction, $1$ cm in the y-direction, and $1$ cm in the z-direction.
+        \item<12-> Divided into N Cartesian cells, $N=[5, 10, 25, 50, 100, 250, 500, 1000]$.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{MOOSE Heat Conduction Model}
     \pause
     \begin{itemize}
-        \item <2-> Mesh with identical dimensions as OpenMC model. Allows 1:1 feedback.
-        \item <3-> MOOSE solves for temperature distribution.
-        \item <4-> Convective boundary conditions at end points with heat sink at $T_{0}=293$ K.
-        \item <5-> Jacobi Free Newton Krylov solver: $10^{-7}$ absolute tolerance and $10^{-9}$ relative tolerance.
+        \item <2-> MOOSE solves for temperature distribution.
+        \item <3-> Mesh uses identical dimensions as OpenMC model. Allows 1:1 feedback.
+        \item <4-> Jacobi Free Newton Krylov solver.
     \end{itemize}
 \end{frame}
 
@@ -391,33 +394,6 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Why do the error bars appear on the same order despite cell refinement?}
-    \pause
-    \begin{figure}[T]
-        \centering
-        \begin{subfigure}{0.32\textwidth}
-            \includegraphics[width=\linewidth]{figures/50_flux_CE_error_bars.png}
-        \end{subfigure}
-        \begin{subfigure}{0.32\textwidth}
-            \includegraphics[width=\linewidth]{figures/100_flux_CE_error_bars.png}
-        \end{subfigure}
-        \begin{subfigure}{0.32\textwidth}
-            \includegraphics[width=\linewidth]{figures/250_flux_CE_error_bars}
-        \end{subfigure}
-        \begin{subfigure}{0.32\textwidth}
-            \includegraphics[width=\linewidth]{figures/500_flux_CE_error_bars}
-        \end{subfigure}
-        \begin{subfigure}{0.32\textwidth}
-            \includegraphics[width=\linewidth]{figures/1000_flux_CE_error_bars}
-        \end{subfigure}
-    \end{figure}
-    \begin{itemize}
-        \item <3-> MFP $\in[239,278]$ cm ($L=106.47$ cm). Spatially uniform birth distribution.
-        \item <4-> Nearly all points fall within $2\sigma$ (95\% Confidence Interval), meaning that Cardinal is computing the correct flux within statistical uncertainty.
-    \end{itemize}
-\end{frame}
-
 %%----------------------------------------------------------------------------%%
 %% Bibliography
 %%----------------------------------------------------------------------------%%
@@ -428,21 +404,38 @@
             \item Benchmark authors: David P.~Greisheimer and Gabriel Kooreman
             \item Co-authors: April J.~Novak, Patrick Shriwise, Paul P.H.~Wilson
             \item OpenMC, Cardinal, and MOOSE teams!
+            \item The first author was supported in part by the US Nuclear Regulatory Commission's Graduate Fellowship Program administered by the University of Wisconsin-Madison.
+            % \item Regarding the second and third authors, this work was supported in part by Laboratory Directed Research and Development (LDRD) funding via UChicago Argonne, LLC, Operator of Argonne National Laboratory ("Argonne"). Argonne, a U.S. DOE Office of Science laboratory, is operated under Contract No. DE-AC02-06CH11357.
         \end{itemize}
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.75\linewidth]{figures/openmc_logo.png}
+            \includegraphics[width=0.5\linewidth]{figures/openmc_logo.png}
         \end{figure}
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.75\linewidth]{figures/cardinal_logo.png}
+            \includegraphics[width=0.5\linewidth]{figures/cardinal_logo.png}
         \end{figure}
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.75\linewidth]{figures/moose_logo.png}
+            \includegraphics[width=0.5\linewidth]{figures/moose_logo.png}
         \end{figure}
     \end{frame}
 \end{withoutheadline}
+
+\begin{frame}{Summary \textbf{TODO}}
+    \begin{itemize}
+        \item In this work, we
+        \begin{itemize}
+            \item
+        \end{itemize}
+        \item Next steps include ...
+        \begin{itemize}
+            \item Simulation using Nek for heat Transfer
+            \item Explicit modeling of thermal expansion
+            \item Look further into the error norms to investigate deviation from expectations.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
 
 \begin{withoutheadline}
     \begin{frame}{Questions?}
@@ -453,6 +446,7 @@
             \item Cardinal repository: \href{https://github.com/neams-th-coe/cardinal.git}{https://github.com/neams-th-coe/cardinal.git}
             \item MOOSE website: \href{https://mooseframework.inl.gov/}{https://mooseframework.inl.gov/}
             \item MOOSE repository: \href{https://github.com/idaholab/moose}{https://github.com/idaholab/moose}
+            \item Add me on LinkedIn (\href{https://www.linkedin.com/in/lewisgross1296}{lewisgross1296}) and GitHub (\href{https://github.com/lewisgross1296}{lewisgross1296})!
         \end{itemize}
     \end{frame}
 \end{withoutheadline}
@@ -471,6 +465,33 @@
         \includegraphics[width=\linewidth]{figures/benchmark_values.png}
     \end{figure}
 \end{frame}
+
+\begin{frame}
+    \frametitle{Why do the error bars appear on the same order despite cell refinement?}
+        \begin{figure}[T]
+            \centering
+            \begin{subfigure}{0.32\textwidth}
+                \includegraphics[width=\linewidth]{figures/50_flux_CE_error_bars.png}
+            \end{subfigure}
+            \begin{subfigure}{0.32\textwidth}
+                \includegraphics[width=\linewidth]{figures/100_flux_CE_error_bars.png}
+            \end{subfigure}
+            \begin{subfigure}{0.32\textwidth}
+                \includegraphics[width=\linewidth]{figures/250_flux_CE_error_bars}
+            \end{subfigure}
+            \begin{subfigure}{0.32\textwidth}
+                \includegraphics[width=\linewidth]{figures/500_flux_CE_error_bars}
+            \end{subfigure}
+            \begin{subfigure}{0.32\textwidth}
+                \includegraphics[width=\linewidth]{figures/1000_flux_CE_error_bars}
+            \end{subfigure}
+        \end{figure}
+        \begin{itemize}
+            \item <3-> MFP $\in[239,278]$ cm ($L=106.47$ cm). Spatially uniform birth distribution.
+            \item <4-> Nearly all points fall within $2\sigma$ (95\% Confidence Interval), meaning that Cardinal is computing the correct flux within statistical uncertainty.
+        \end{itemize}
+    \end{frame}
+    
 
 \begin{frame}{Coarse $C/E$ results}
     \begin{figure}[T]
