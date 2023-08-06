@@ -95,7 +95,7 @@
 \title{Verification of the Cardinal Multiphysics Solver}
 \subtitle{for 1-D Coupled Heat Transfer and Neutron Transport}
 \author{Lewis I.~Gross$^{1}$, April J.~Novak$^{2,3}$, Patrick Shriwise$^{3,1}$, and Paul P.H.~Wilson$^{1}$}
-\date{August 15, 2022}
+\date{August 16, 2022}
 \institute{[1] University of Wisconsin-Madison [2] University of Illinois Urbana-Champaign [3] Argonne National Lab }
 %%----------------------------------------------------------------------------%%
 \begin{document}
@@ -122,7 +122,7 @@
 %%----------------------------------------------------------------------------%%
 \section{Introduction}
 
-\begin{frame}{Cardinal: A Modern Multiphysics Software \textbf{TODO better picture}}
+\begin{frame}{Cardinal: A Modern Multiphysics Software}
     \vspace*{-0.35cm}
     \begin{figure}[H]
         \centering
@@ -144,9 +144,9 @@
     \pause
     \begin{itemize}
         % \item <2-> Many new emerging multiphysics tools aim to model advanced reactors.
-        \item <2-> All software tools require Verification and Validation (V\&V).
+        \item <2-> All software tools require Verification and Validation (V\&V) to ensure quality results.
         \begin{itemize}
-            \item <3-> Verification is the comparison of simulations to other codes or to physics theory.
+            \item <3-> Verification involves basic numerical checks of a solver, as well as comparison to other codes or to physics theory.
             \item <4-> Validation is the comparison of simulations to experimental results.
         \end{itemize}
         \item <5-> Verification against analytical benchmarks allow measurement of true error.
@@ -188,24 +188,6 @@
         \end{itemize}
 \end{frame}
 
-% \begin{frame}{Analytical Benchmark}
-%     \begin{itemize}
-%         \item <1-> Based on 1-D $S_{2}$ transport, the neutron flux $\phi(x)$ is governed by
-%         \begin{equation}
-%             \frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
-%             \left(\lambda - 1\right)\phi(x) = 0
-%         \end{equation}
-%         \item <1-> with $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ \cite{analytical-benchmark}.
-%         \item <2->  The conduction equation governs energy conservation in the slab
-%         \begin{multline}
-%             \frac{d}{dx}\left\lbrack\kappa(T)\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
-%             \QWITH \\
-%             -\kappa(T) \frac{dT}{dx} \bigg|_{\pm \frac{L}{2}} = \pm h\left[ T(\pm \frac{L}{2}) - T_{0}\right]
-%         \end{multline}
-%         \item <2-> where $\kappa$ is the thermal conductivity, $q$ is the energy released \textbf{per reaction}, $\Sigma_{t}$ is the total macroscopic cross section, and $h$ is the heat transfer coefficient.
-%     \end{itemize}
-% \end{frame}
-
 
 \begin{frame}{System Domain, Differential Equations, and Boundary Conditions}
     \vspace*{-0.45cm}
@@ -219,7 +201,7 @@
         \begin{equation}
             \phi(x) = \phi(0) \sqrt{1 - \frac{(\lambda - 1)P^{2}x^{2}}{L^{2}q^{2}\phi^2(0)}}
         \end{equation}
-        \item <3-> where $P$ is the slab power, $L$ is the slab equilibrium length, and $\lambda = (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$.
+        \item <3-> where $\lambda = (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$, $P$ is the slab power, and $L$ is the slab equilibrium length.
     \end{itemize}
 \end{frame}
 
@@ -312,31 +294,6 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Eigenvalue comparisons across each spatial discretization}
-    \begin{table}[H]
-        \centering
-        \begin{tabular}{@{}ccc@{}}
-            \toprule
-            Resolution &  \keff & (numerical - analytical) [pcm]\\
-            \midrule
-            analytical & 0.29557 & - \\
-            \midrule
-            5    & 0.29624 $\pm$ 0.00003 & \phantom{-}67 $\pm$ 3 \\
-            10   & 0.29581 $\pm$ 0.00004 & \phantom{-}24 $\pm$ 4 \\
-            25   & 0.29563 $\pm$ 0.00004 & \phantom{-}6  $\pm$ 4 \\
-            50   & 0.29553 $\pm$ 0.00004 &           -4  $\pm$ 4 \\
-            100  & 0.29557 $\pm$ 0.00003 & \phantom{-}0  $\pm$ 3 \\
-            250  & 0.29561 $\pm$ 0.00004 & \phantom{-}4  $\pm$ 4 \\
-            500  & 0.29561 $\pm$ 0.00004 & \phantom{-}4  $\pm$ 4 \\
-            1000 & 0.29558 $\pm$ 0.00004 & \phantom{-}1  $\pm$ 4 \\
-        \bottomrule
-        \end{tabular}
-    \end{table}
-    \begin{itemize}
-        \item<2-> \keff is a system-wide parameter, so it converges much faster than flux and is not as dependent on number of cells.
-    \end{itemize}
-\end{frame}
-
 \begin{frame}{Computed to Expected Ratios}
     \vspace*{-0.4cm}
     \pause
@@ -394,6 +351,47 @@
     \end{itemize}
 \end{frame}
 
+\begin{frame}{Eigenvalue comparisons across each spatial discretization}
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{@{}ccc@{}}
+            \toprule
+            Resolution &  \keff & (numerical - analytical) [pcm]\\
+            \midrule
+            analytical & 0.29557 & - \\
+            \midrule
+            5    & 0.29624 $\pm$ 0.00003 & \phantom{-}67 $\pm$ 3 \\
+            10   & 0.29581 $\pm$ 0.00004 & \phantom{-}24 $\pm$ 4 \\
+            25   & 0.29563 $\pm$ 0.00004 & \phantom{-}6  $\pm$ 4 \\
+            50   & 0.29553 $\pm$ 0.00004 &           -4  $\pm$ 4 \\
+            100  & 0.29557 $\pm$ 0.00003 & \phantom{-}0  $\pm$ 3 \\
+            250  & 0.29561 $\pm$ 0.00004 & \phantom{-}4  $\pm$ 4 \\
+            500  & 0.29561 $\pm$ 0.00004 & \phantom{-}4  $\pm$ 4 \\
+            1000 & 0.29558 $\pm$ 0.00004 & \phantom{-}1  $\pm$ 4 \\
+        \bottomrule
+        \end{tabular}
+    \end{table}
+    \begin{itemize}
+        \item<2-> \keff is a system-wide parameter, so it converges much faster than flux and is not as dependent on number of cells.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Summary \textbf{TODO}}
+    \begin{itemize}
+        \item In this work, we
+        \begin{itemize}
+            \item computed flux, $k$-eigenvalue, temperature distribution in the slab
+            \item compared to analytical formulas with norms,$C/E$ with $2-\sigma$ error bars, estimate pcm difference from analytical
+        \end{itemize}
+        \item Next steps include ...
+        \begin{itemize}
+            \item Simulation using NekRS for heat transfer.
+            \item Explicit modeling of thermal expansion.
+            \item Look further into the error norms to investigate deviation from expectations.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
 %%----------------------------------------------------------------------------%%
 %% Bibliography
 %%----------------------------------------------------------------------------%%
@@ -402,7 +400,7 @@
     \begin{frame}{Acknowledgements}
         \begin{itemize}
             \item Benchmark authors: David P.~Greisheimer and Gabriel Kooreman
-            \item Co-authors: April J.~Novak, Patrick Shriwise, Paul P.H.~Wilson
+            \item Co-authors: April J.~Novak, Patrick Shriwise, and Paul P.H.~Wilson
             \item OpenMC, Cardinal, and MOOSE teams!
             \item The first author was supported in part by the US Nuclear Regulatory Commission's Graduate Fellowship Program administered by the University of Wisconsin-Madison.
             % \item Regarding the second and third authors, this work was supported in part by Laboratory Directed Research and Development (LDRD) funding via UChicago Argonne, LLC, Operator of Argonne National Laboratory ("Argonne"). Argonne, a U.S. DOE Office of Science laboratory, is operated under Contract No. DE-AC02-06CH11357.
@@ -422,20 +420,12 @@
     \end{frame}
 \end{withoutheadline}
 
-\begin{frame}{Summary \textbf{TODO}}
-    \begin{itemize}
-        \item In this work, we
-        \begin{itemize}
-            \item
-        \end{itemize}
-        \item Next steps include ...
-        \begin{itemize}
-            \item Simulation using Nek for heat Transfer
-            \item Explicit modeling of thermal expansion
-            \item Look further into the error norms to investigate deviation from expectations.
-        \end{itemize}
-    \end{itemize}
-\end{frame}
+
+\begin{withoutheadline}
+    \begin{frame}[allowframebreaks]{Bibliography}
+        \printbibliography
+    \end{frame}
+    \end{withoutheadline}
 
 \begin{withoutheadline}
     \begin{frame}{Questions?}
@@ -449,12 +439,6 @@
             \item Add me on LinkedIn (\href{https://www.linkedin.com/in/lewisgross1296}{lewisgross1296}) and GitHub (\href{https://github.com/lewisgross1296}{lewisgross1296})!
         \end{itemize}
     \end{frame}
-\end{withoutheadline}
-
-\begin{withoutheadline}
-\begin{frame}[allowframebreaks]{Bibliography}
-    \printbibliography
-\end{frame}
 \end{withoutheadline}
 
 \appendix
@@ -487,11 +471,11 @@
             \end{subfigure}
         \end{figure}
         \begin{itemize}
-            \item <3-> MFP $\in[239,278]$ cm ($L=106.47$ cm). Spatially uniform birth distribution.
-            \item <4-> Nearly all points fall within $2\sigma$ (95\% Confidence Interval), meaning that Cardinal is computing the correct flux within statistical uncertainty.
+            \item <2->MFP $\in[239,278]$ cm ($L=106.47$ cm). Spatially uniform birth distribution.
+            \item <3->Nearly all points fall within $2\sigma$ (95\% Confidence Interval), meaning that Cardinal is computing the correct flux within statistical uncertainty.
         \end{itemize}
     \end{frame}
-    
+
 
 \begin{frame}{Coarse $C/E$ results}
     \begin{figure}[T]
@@ -632,8 +616,29 @@
 \end{frame}
 \end{withoutheadline}
 
+\begin{frame}{Analytical Benchmark ODEs}
+    \begin{itemize}
+        \item Based on 1-D $S_{2}$ transport, the neutron flux $\phi(x)$ is governed by
+        \begin{multline}
+            \frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
+            \left(\lambda - 1\right)\phi(x) = 0
+            \QWITH \\
+            \pm \frac{d\phi}{dx}\bigg|_{\pm \frac{L}{2}} + \Sigma_{t}\left(\pm \frac{L}{2}\right)
+        \end{multline}
+        \item with $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ \cite{analytical-benchmark}.
+        \item The conduction equation governs energy conservation in the slab
+        \begin{multline}
+            \frac{d}{dx}\left\lbrack\kappa(T)\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
+            \QWITH \\
+            -\kappa(T) \frac{dT}{dx} \bigg|_{\pm \frac{L}{2}} = \pm h\left[ T(\pm \frac{L}{2}) - T_{0}\right]
+        \end{multline}
+        \item where $\kappa$ is the thermal conductivity, $q$ is the energy released \textbf{per reaction}, $\Sigma_{t}$ is the total macroscopic cross section, and $h$ is the heat transfer coefficient.
+    \end{itemize}
+\end{frame}
+
+
 \begin{withoutheadline}
-    \begin{frame}[allowframebreaks]{Ensuring Validity of the Fundamental Ansatz}
+    \begin{frame}[allowframebreaks]{Ensuring Validity of the Fundamental Ansatz $T=f\phi(x)$}
         \begin{itemize}
             \item Taking the heat conduction ODE
             \begin{equation}
