@@ -133,6 +133,14 @@
     \end{itemize}
 \end{frame}
 
+\begin{frame}{Cardinal: A Modern Multiphysics Software}
+    \vspace*{-0.85cm}
+    \begin{figure}[H]
+        \hspace*{0.85cm}
+        \includegraphics[width=\linewidth]{figures/solid_fluid_coupling.png}
+    \end{figure}
+\end{frame}
+
 \begin{frame}{Application of Cardinal to Model Advanced Reactors}
     \begin{figure}[H]
         \centering
@@ -173,12 +181,8 @@
             \begin{equation} \label{density-temp-relation}
                 \rho(x) =  \rho_{0} \sqrt{\frac{T_{0}}{T(x)}}
             \end{equation}
-            % \item <6-> Linear temperature dependence for thermal conductivity
-            % \begin{equation}\label{thermal-conductivity-temp-relation}
-            %     \kappa(x) = \kappa_{0} T(x)
-            % \end{equation}
         \end{itemize}\vspace*{-0.4cm}
-        \item <7->  Using (\ref{doppler-micro-xs}) and (\ref{density-temp-relation}) gives a Doppler-broadened, macroscopic, total cross section that accounts for changes in density due to temperature as
+        \item <6->  Using (\ref{doppler-micro-xs}) and (\ref{density-temp-relation}) gives a Doppler-broadened, macroscopic, total cross section that accounts for changes in density due to temperature as
         \begin{equation}
             \Sigma_{t}(x) = \frac{\rho_{0}\sigma_{t,0} N_{A}}{A} \frac{T_{0}}{T(x)}
             \equiv\Sigma_{t,0}\frac{T_{0}}{T(x)}
@@ -212,21 +216,21 @@
 \begin{frame}{OpenMC Model}
     \pause
     \begin{itemize}
-        \item<2-> Patch to mimic $S_{2}$ transport, which restricts particle direction to $\pm$x:
+        \item <2-> Patch to mimic $S_{2}$ transport, which restricts particle direction to $\pm$x:
         \begin{itemize}
-            \item<3-> Source direction distribution only $\pm$ x. (simulation script)
-            \item<4-> Scattering samples to either continue forward or backscatter. (source code)
-            \item<5-> Particles born from fission also have direction distribution of $\pm$ x. (source code)
+            \item <3-> Source direction distribution only $\pm$ x. (simulation script)
+            \item <4-> Scattering samples to either continue forward or backscatter. (source code)
+            \item <5-> Particles born from fission also have direction distribution of $\pm$ x. (source code)
         \end{itemize}
-        \item<6-> Custom one-group XS temperature library
+        \item <6-> Custom one-group XS temperature library
         \begin{itemize}
-            \item<7-> Uses analytical $\Sigma(T)$, instead of explicitly modeling thermal expansion.
-            \item<8-> Contains data for integer temperatures $T\in[308,358]$ K.
-            \item<9-> Rounds to nearest temperature for lookup between two data points.
+            \item <7-> Uses analytical $\Sigma(T)$, instead of explicitly modeling thermal expansion.
+            \item <8-> Contains data for integer temperatures $T\in[308,358]$ K.
+            \item <9-> Rounds to nearest temperature for lookup between two data points.
         \end{itemize}
-        \item<10-> Mesh deformation is possible in Cardinal via DAGMC \cite{novak-2023}, but this was not available at the time of the simulation.
-        \item<11-> Geometry uses equilibrium length provided from the benchmark $L=106.47$ cm in the x-direction, $1$ cm in the y-direction, and $1$ cm in the z-direction.
-        \item<12-> Divided into N Cartesian cells, $N=[5, 10, 25, 50, 100, 250, 500, 1000]$.
+        \item <10-> Mesh deformation is possible in Cardinal via DAGMC \cite{novak-2023}, but this was not available at the time of this work.
+        \item <11-> Geometry uses equilibrium length provided from the benchmark $L=106.47$ cm in the x-direction, $1$ cm in the y-direction, and $1$ cm in the z-direction.
+        \item <12-> Divided into N Cartesian cells, $N=[5, 10, 25, 50, 100, 250, 500, 1000]$.
     \end{itemize}
 \end{frame}
 
@@ -235,7 +239,7 @@
     \begin{itemize}
         \item <2-> MOOSE solves for temperature distribution.
         \item <3-> Mesh uses identical dimensions as OpenMC model. Allows 1:1 feedback.
-        \item <4-> Jacobi Free Newton Krylov solver.
+        \item <4-> Jacobi Free Newton Krylov (JFNK) solver.
     \end{itemize}
 \end{frame}
 
@@ -344,7 +348,7 @@
 \begin{frame}{Individual Flux $C/E$ with $2\sigma$ Error Bars for Fine Cases}
     \begin{figure}[T]
         \centering
-        \includegraphics[width=0.7\linewidth]{figures/1000_flux_CE_error_bars}
+        \includegraphics[width=0.6\linewidth]{figures/1000_flux_CE_error_bars}
     \end{figure}
     \begin{itemize}
         \item $C/E$ in blue with $2\sigma$ error bars (gray bounded by purple). $1000$ cells.
@@ -372,27 +376,36 @@
         \end{tabular}
     \end{table}
     \begin{itemize}
-        \item<2-> \keff is a system-wide parameter, so it converges much faster than flux and is not as dependent on number of cells.
+        \item <2-> \keff is a system-wide parameter, so it converges much faster than flux and is not as dependent on number of cells.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Summary \textbf{TODO}}
+\begin{frame}{Summary}
+    \pause
     \begin{itemize}
-        \item In this work, we
+        \item <2-> In this work, we
         \begin{itemize}
-            \item computed flux, $k$-eigenvalue, temperature distribution in the slab
-            \item compared to analytical formulas with norms,$C/E$ with $2-\sigma$ error bars, estimate pcm difference from analytical
+            \item <3-> compute $T(x)$, $\phi(x)$, and the $k$-eigenvalue in the slab at its equilibrium length for various mesh counts.
+            \item <4-> compare numerical and analytical results via
+            \begin{itemize}
+                \item <5-> mesh count vs $L_{2}$ error norm plots.
+                \item <6-> $C/E$ plots for $T(x)$ and $\phi(x)$.
+                \item <7-> $2\sigma$ error bar plots for each $\phi(x)$ $C/E$.
+                \item <8-> eigenvalue pcm difference from analytical with $1\sigma$ uncertainty.
+            \end{itemize}
+            \item <9-> conclude verification of Cardinal's capability to model this 1-D coupled heat transfer and neutron transport benchmark.
         \end{itemize}
-        \item Next steps include ...
+        \item <10-> Next steps include
         \begin{itemize}
-            \item Simulation using NekRS for heat transfer.
-            \item Explicit modeling of thermal expansion.
-            \item Look further into the error norms to investigate deviation from expectations.
+            \item <11-> simulation using NekRS for heat transfer.
+            \item <12-> explicit modeling of thermal expansion and density feedback.
+            \item <13-> further investigation into the error norms.
+            \item <14-> integration of this benchmark and others \cite{aya2023} into Cardinal's regression testing.
         \end{itemize}
     \end{itemize}
 \end{frame}
 
-%%----------------------------------------------------------------------------%%
+%%----------------------------------------------------------------------------%%`'
 %% Bibliography
 %%----------------------------------------------------------------------------%%
 
@@ -474,7 +487,7 @@
             \item <2->MFP $\in[239,278]$ cm ($L=106.47$ cm). Spatially uniform birth distribution.
             \item <3->Nearly all points fall within $2\sigma$ (95\% Confidence Interval), meaning that Cardinal is computing the correct flux within statistical uncertainty.
         \end{itemize}
-    \end{frame}
+\end{frame}
 
 
 \begin{frame}{Coarse $C/E$ results}
@@ -610,7 +623,7 @@
         \end{equation}
         And the boundary conditions of interest are now
         \begin{equation}
-            \frac{d\phi}{dx}\bigg|_{x=\pm \frac{L}{2}} \pm  \Sigma_{t}(x=\pm \frac{L}{2})  \phi(x=\pm \frac{L}{2})  = 0
+            \pm \frac{d\phi}{dx}\bigg|_{x=\pm \frac{L}{2}} +  \Sigma_{t}(x=\pm \frac{L}{2})  \phi(x=\pm \frac{L}{2})  = 0
         \end{equation}
     \end{itemize}
 \end{frame}
@@ -623,7 +636,7 @@
             \frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
             \left(\lambda - 1\right)\phi(x) = 0
             \QWITH \\
-            \pm \frac{d\phi}{dx}\bigg|_{\pm \frac{L}{2}} + \Sigma_{t}\left(\pm \frac{L}{2}\right)
+            \pm \frac{d\phi}{dx}\bigg|_{x=\pm \frac{L}{2}} +  \Sigma_{t}(x=\pm \frac{L}{2})  \phi(x=\pm \frac{L}{2})  = 0
         \end{multline}
         \item with $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ \cite{analytical-benchmark}.
         \item The conduction equation governs energy conservation in the slab
