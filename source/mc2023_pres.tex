@@ -1,4 +1,4 @@
-\documentclass[9pt,t]{beamer}
+\documentclass[9pt,t,aspectratio=169]{beamer}
 \usetheme[white]{Wisconsin}
 \usepackage[utf8]{inputenc}
 \setbeamertemplate{page number in head/foot}[totalframenumber]
@@ -94,9 +94,9 @@
 
 \title{Verification of the Cardinal Multiphysics Solver}
 \subtitle{for 1-D Coupled Heat Transfer and Neutron Transport}
-\author{Lewis I.~Gross$^{1}$, April J.~Novak$^{2,3}$, Patrick Shriwise$^{3,1}$, and Paul P.H.~Wilson$^{1}$}
-\date{August 16, 2022}
-\institute{[1] University of Wisconsin-Madison [2] University of Illinois Urbana-Champaign [3] Argonne National Lab }
+\author{\vspace*{-0.45cm}Lewis I. Gross\textsuperscript{1}, April J. Novak\textsuperscript{2,3}, Patrick Shriwise\textsuperscript{3,1}, and Paul P.H. Wilson\textsuperscript{1}}
+\institute{University of Wisconsin-Madison\textsuperscript{1}, University of Illinois Urbana-Champaign\textsuperscript{2}, Argonne National Lab\textsuperscript{3} }
+\date{\vspace*{-0.25cm}August 16, 2022}
 %%----------------------------------------------------------------------------%%
 \begin{document}
 
@@ -121,37 +121,35 @@
 %% Section 1
 %%----------------------------------------------------------------------------%%
 \section{Introduction}
-
-\begin{frame}{Cardinal: A Modern Multiphysics Software}
-    \vspace*{-0.35cm}
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.9\linewidth]{figures/framework.png}
-    \end{figure}
-    \begin{itemize}
-        \item Cardinal \cite{novak2022-cardinal} wraps OpenMC \cite{openmc} and NekRS \cite{nekrs} into the MOOSE framework \cite{lindsay2022moose}.
-    \end{itemize}
+\hypersetup{citecolor=white}
+\begin{frame}{Cardinal \cite{novak2022-cardinal} wraps OpenMC \cite{openmc} and NekRS \cite{nekrs} into the MOOSE framework \cite{lindsay2022moose}.}
+    \vspace*{-0.4cm}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.75\linewidth]{figures/framework.png}
+        \end{figure}
 \end{frame}
+\hypersetup{citecolor=black}
 
 \begin{frame}{Cardinal: A Modern Multiphysics Software}
-    \vspace*{-0.85cm}
+    \vspace*{-0.4cm}
     \begin{figure}[H]
-        \hspace*{0.85cm}
-        \includegraphics[width=\linewidth]{figures/solid_fluid_coupling.png}
+        \hspace*{1.25cm}
+        \includegraphics[width=0.75\linewidth]{figures/solid_fluid_coupling.png}
     \end{figure}
 \end{frame}
 
 \begin{frame}{Application of Cardinal to Model Advanced Reactors}
+    \vspace*{-0.35cm}
     \begin{figure}[H]
         \centering
-        \includegraphics[width=\linewidth]{figures/cardinal_apps.png}
+        \includegraphics[width=0.8\linewidth]{figures/cardinal_apps.png}
     \end{figure}
 \end{frame}
 
 \begin{frame}{Modern Multiphysics Simulation and the Importance of V\&V}
     \pause
     \begin{itemize}
-        % \item <2-> Many new emerging multiphysics tools aim to model advanced reactors.
         \item <2-> All software tools require Verification and Validation (V\&V) to ensure quality results.
         \begin{itemize}
             \item <3-> Verification involves basic numerical checks of a solver, as well as comparison to other codes or to physics theory.
@@ -193,19 +191,31 @@
 \end{frame}
 
 
+
 \begin{frame}{System Domain, Differential Equations, and Boundary Conditions}
     \vspace*{-0.45cm}
     \begin{figure}[T]
         \centering
-        \includegraphics[width=0.8\linewidth]{figures/1D_Benchmark_Diagram.png}<1->
+        \includegraphics[width=0.9\linewidth]{figures/1D_Benchmark_Diagram.png}
     \end{figure}
+\end{frame}
+
+
+\begin{frame}{System Domain, Differential Equations, and Boundary Conditions}
+    \vspace*{-0.45cm}
+    \begin{figure}[T]
+        \centering
+        \includegraphics[width=0.725\linewidth]{figures/1D_Benchmark_Diagram.png}<1->
+    \end{figure}
+    \vspace{-0.325cm}
     \begin{itemize}
-        \item <2-> The fundamental assumption (ansatz) of \cite{analytical-benchmark}: $T(x)=f\phi(x)$.
-        \item <3-> This imposes two constraints that determine $h$ and $\sigma_{t,0}$. The solution:
+        \item The fundamental assumption (ansatz) of \cite{analytical-benchmark}: $T(x)=f\phi(x)$. This imposes two constraints that determine $h$ and $\sigma_{t,0}$. The solution is
         \begin{equation}
-            \phi(x) = \phi(0) \sqrt{1 - \frac{(\lambda - 1)P^{2}x^{2}}{L^{2}q^{2}\phi^2(0)}}
+            \phi(x) = \phi(0) \sqrt{1 - \frac{(\lambda - 1)P^{2}x^{2}}{L^{2}q^{2}\phi^2(0)}} 
+            \QWITH
+            \lambda = \frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}}
         \end{equation}
-        \item <3-> where $\lambda = (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$, $P$ is the slab power, and $L$ is the slab equilibrium length.
+        \item where $P$ is the slab power and $L$ is the slab equilibrium length.
     \end{itemize}
 \end{frame}
 
@@ -228,7 +238,7 @@
             \item <8-> Contains data for integer temperatures $T\in[308,358]$ K.
             \item <9-> Rounds to nearest temperature for lookup between two data points.
         \end{itemize}
-        \item <10-> Mesh deformation is possible in Cardinal via DAGMC \cite{novak-2023}, but this was not available at the time of this work.
+        \item <10-> Mesh deformation is possible in Cardinal via DAGMC \cite{novak-2023} but was not available at the time of this work.
         \item <11-> Geometry uses equilibrium length provided from the benchmark $L=106.47$ cm in the x-direction, $1$ cm in the y-direction, and $1$ cm in the z-direction.
         \item <12-> Divided into N Cartesian cells, $N=[5, 10, 25, 50, 100, 250, 500, 1000]$.
     \end{itemize}
@@ -247,7 +257,7 @@
     \pause
     \begin{figure}[T]
         \centering
-        \includegraphics[width=\linewidth]{figures/cardinal_solid.png}<2->
+        \includegraphics[width=0.85\linewidth]{figures/cardinal_solid.png}<2->
     \end{figure}
     \begin{itemize}
         \item <3-> 200 Picard Iterations. Robbins-Monro relaxation assisted tally statistics \cite{dufek}.
@@ -266,17 +276,19 @@
 \section{Results and Discussion}
 \begin{frame}{Outputs and Comparisons}
     \pause
+    \vspace*{-0.3cm}
     \begin{figure}[T]
         \hspace*{-1cm}
         \begin{subfigure}[b]{0.495\linewidth}
             \centering
-            \includegraphics[height=0.85\linewidth]{figures/temp_50.png}
+            \includegraphics[height=0.8\linewidth]{figures/temp_50.png}
         \end{subfigure}\hspace*{0.6cm}
         \begin{subfigure}[b]{0.495\linewidth}
         \centering
-            \includegraphics[height=0.85\linewidth]{figures/flux_50.png}
+            \includegraphics[height=0.8\linewidth]{figures/flux_50.png}
         \end{subfigure}
     \end{figure}
+    \vspace{-0.25cm}
     \begin{itemize}
         \item Numerical solutions for 50 mesh elements. On the right, error bars show the relative error of the flux, which are nearly smaller than the circular marker sizes.
     \end{itemize}
@@ -284,71 +296,79 @@
 
 \begin{frame}{Solution $L_{2}$ Error Norms}
     \pause
+    \vspace*{-0.45cm}
     \begin{figure}[T]
         \hspace*{-0.9cm}
         \begin{subfigure}{0.4995\linewidth}
-            \includegraphics[height=0.85\linewidth]{figures/temp_error_norms.png}
-        \end{subfigure}\hspace*{0.85cm}
+            \includegraphics[height=0.8\linewidth]{figures/temp_error_norms.png}
+        \end{subfigure}\hspace*{0.75cm}
         \begin{subfigure}{0.4995\linewidth}
-            \includegraphics[height=0.85\linewidth]{figures/flux_error_norms.png}
+            \includegraphics[height=0.8\linewidth]{figures/flux_error_norms.png}
         \end{subfigure}
     \end{figure}
+    \vspace*{-0.15cm}
     \begin{itemize}
         \item Error norms as a function of heat conduction mesh element count and OpenMC cell count, respectively. Temperature slope $-0.9986$ ($R^2\approx1.0$).
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Computed to Expected Ratios}
-    \vspace*{-0.4cm}
+    \vspace*{-0.5cm}
     \pause
     \begin{figure}[T]
-        \hspace*{-0.87cm}
+        \hspace*{-0.7cm}
         \begin{subfigure}{0.495\linewidth}
-            \includegraphics[height=0.85\linewidth]{figures/fine_temp_num_to_analy_ratios.png}
+            \includegraphics[height=0.75\linewidth]{figures/fine_temp_num_to_analy_ratios.png}
         \end{subfigure}\hspace*{0.85cm}
         \begin{subfigure}{0.495\linewidth}
-            \includegraphics[height=0.85\linewidth]{figures/fine_flux_num_to_analy_ratios.png}
+            \includegraphics[height=0.75\linewidth]{figures/fine_flux_num_to_analy_ratios.png}
         \end{subfigure}
     \end{figure}
+    \vspace*{-0.25cm}
     \begin{itemize}
         \item $C/E$ for fine cases ($N=50,100,250,500,1000$). Note the scales of the $y$-axes - the temperature is everywhere being predicted to within 0.006\% and flux is everywhere being predicted to within 0.05\%.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Individual Flux $C/E$ with $2\sigma$ Error Bars for Fine Cases}
+    \vspace*{-0.35cm}
     \begin{figure}[T]
-        \hspace*{-1.1cm}
+        \hspace*{-0.3cm}
         \begin{subfigure}{0.495\textwidth}
-            \includegraphics[width=1.18\linewidth]{figures/50_flux_CE_error_bars.png}
-        \end{subfigure}\hspace*{0.89cm}
+            \includegraphics[width=\linewidth]{figures/50_flux_CE_error_bars.png}
+        \end{subfigure}\hspace*{0.5cm}
         \begin{subfigure}{0.495\textwidth}
-            \includegraphics[width=1.18\linewidth]{figures/100_flux_CE_error_bars.png}
+            \includegraphics[width=\linewidth]{figures/100_flux_CE_error_bars.png}
         \end{subfigure}
     \end{figure}
+    \vspace*{-0.15cm}
     \begin{itemize}
         \item $C/E$ in blue with $2\sigma$ error bars (gray bounded by purple). $50$ and $100$ cells.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Individual Flux $C/E$ with $2\sigma$ Error Bars for Fine Cases}
+    \vspace*{-0.35cm}
     \begin{figure}[T]
-        \hspace*{-1.1cm}
+        \hspace*{-0.3cm}
         \begin{subfigure}{0.495\textwidth}
-            \includegraphics[width=1.18\linewidth]{figures/250_flux_CE_error_bars}
-        \end{subfigure}\hspace*{0.89cm}
+            \includegraphics[width=\linewidth]{figures/250_flux_CE_error_bars}
+        \end{subfigure}\hspace*{0.5cm}
         \begin{subfigure}{0.495\textwidth}
-            \includegraphics[width=1.18\linewidth]{figures/500_flux_CE_error_bars}
+            \includegraphics[width=\linewidth]{figures/500_flux_CE_error_bars}
         \end{subfigure}
     \end{figure}
+    \vspace*{-0.15cm}
     \begin{itemize}
         \item $C/E$ in blue with $2\sigma$ error bars (gray bounded by purple). $250$ and $500$ cells
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Individual Flux $C/E$ with $2\sigma$ Error Bars for Fine Cases}
+    \vspace*{-0.35cm}
     \begin{figure}[T]
         \centering
-        \includegraphics[width=0.6\linewidth]{figures/1000_flux_CE_error_bars}
+        \includegraphics[width=0.5\linewidth]{figures/1000_flux_CE_error_bars}
     \end{figure}
     \begin{itemize}
         \item $C/E$ in blue with $2\sigma$ error bars (gray bounded by purple). $1000$ cells.
@@ -376,7 +396,7 @@
         \end{tabular}
     \end{table}
     \begin{itemize}
-        \item <2-> \keff is a system-wide parameter, so it converges much faster than flux and is not as dependent on number of cells.
+        \item \keff is a system-wide parameter, so it converges much faster than flux and is not as dependent on number of cells.
     \end{itemize}
 \end{frame}
 
@@ -391,9 +411,9 @@
                 \item <5-> mesh count vs $L_{2}$ error norm plots.
                 \item <6-> $C/E$ plots for $T(x)$ and $\phi(x)$.
                 \item <7-> $2\sigma$ error bar plots for each $\phi(x)$ $C/E$.
-                \item <8-> eigenvalue pcm difference from analytical with $1\sigma$ uncertainty.
+                \item <8-> eigenvalue pcm difference from analytical.
             \end{itemize}
-            \item <9-> conclude verification of Cardinal's capability to model this 1-D coupled heat transfer and neutron transport benchmark.
+            \item <9-> verify Cardinal's capability to model this 1-D coupled heat transfer and neutron transport benchmark.
         \end{itemize}
         \item <10-> Next steps include
         \begin{itemize}
@@ -412,23 +432,22 @@
 \begin{withoutheadline}
     \begin{frame}{Acknowledgements}
         \begin{itemize}
-            \item Benchmark authors: David P.~Greisheimer and Gabriel Kooreman
-            \item Co-authors: April J.~Novak, Patrick Shriwise, and Paul P.H.~Wilson
-            \item OpenMC, Cardinal, and MOOSE teams!
             \item The first author was supported in part by the US Nuclear Regulatory Commission's Graduate Fellowship Program administered by the University of Wisconsin-Madison.
-            % \item Regarding the second and third authors, this work was supported in part by Laboratory Directed Research and Development (LDRD) funding via UChicago Argonne, LLC, Operator of Argonne National Laboratory ("Argonne"). Argonne, a U.S. DOE Office of Science laboratory, is operated under Contract No. DE-AC02-06CH11357.
+            \item Co-authors: April J.~Novak, Patrick Shriwise, and Paul P.H.~Wilson.
+            \item Benchmark authors: David P.~Greisheimer and Gabriel Kooreman.
+            \item OpenMC, Cardinal, and MOOSE teams!
         \end{itemize}
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.5\linewidth]{figures/openmc_logo.png}
+            \includegraphics[width=0.45\linewidth]{figures/openmc_logo.png}
         \end{figure}
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.5\linewidth]{figures/cardinal_logo.png}
+            \includegraphics[width=0.45\linewidth]{figures/cardinal_logo.png}
         \end{figure}
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.5\linewidth]{figures/moose_logo.png}
+            \includegraphics[width=0.45\linewidth]{figures/moose_logo.png}
         \end{figure}
     \end{frame}
 \end{withoutheadline}
@@ -457,40 +476,43 @@
 \appendix
 
 \begin{frame}{Benchmark Canonical Parameters Values}
+    \vspace*{-0.4cm}
     \begin{figure}[T]
         \centering
-        \includegraphics[width=\linewidth]{figures/benchmark_values.png}
+        \includegraphics[width=0.75\linewidth]{figures/benchmark_values.png}
     \end{figure}
 \end{frame}
 
 \begin{frame}
     \frametitle{Why do the error bars appear on the same order despite cell refinement?}
+        \vspace*{-0.425cm}
         \begin{figure}[T]
             \centering
-            \begin{subfigure}{0.32\textwidth}
-                \includegraphics[width=\linewidth]{figures/50_flux_CE_error_bars.png}
+            \begin{subfigure}{0.3\textwidth}
+                \includegraphics[width=0.9\linewidth]{figures/50_flux_CE_error_bars.png}
             \end{subfigure}
-            \begin{subfigure}{0.32\textwidth}
-                \includegraphics[width=\linewidth]{figures/100_flux_CE_error_bars.png}
+            \begin{subfigure}{0.3\textwidth}
+                \includegraphics[width=0.9\linewidth]{figures/100_flux_CE_error_bars.png}
             \end{subfigure}
-            \begin{subfigure}{0.32\textwidth}
-                \includegraphics[width=\linewidth]{figures/250_flux_CE_error_bars}
+            \begin{subfigure}{0.3\textwidth}
+                \includegraphics[width=0.9\linewidth]{figures/250_flux_CE_error_bars}
             \end{subfigure}
-            \begin{subfigure}{0.32\textwidth}
-                \includegraphics[width=\linewidth]{figures/500_flux_CE_error_bars}
+            \begin{subfigure}{0.3\textwidth}
+                \includegraphics[width=0.9\linewidth]{figures/500_flux_CE_error_bars}
             \end{subfigure}
-            \begin{subfigure}{0.32\textwidth}
-                \includegraphics[width=\linewidth]{figures/1000_flux_CE_error_bars}
+            \begin{subfigure}{0.3\textwidth}
+                \includegraphics[width=0.9\linewidth]{figures/1000_flux_CE_error_bars}
             \end{subfigure}
         \end{figure}
+        \vspace*{-0.1cm}
         \begin{itemize}
-            \item <2->MFP $\in[239,278]$ cm ($L=106.47$ cm). Spatially uniform birth distribution.
-            \item <3->Nearly all points fall within $2\sigma$ (95\% Confidence Interval), meaning that Cardinal is computing the correct flux within statistical uncertainty.
+            \item <2->MFP $\in[239,278]$ cm ($L=106.47$ cm). Spatially uniform birth distribution. Nearly all points fall within $2\sigma$ (95\% CI), meaning that Cardinal is computing the correct flux within statistical uncertainty.
         \end{itemize}
 \end{frame}
 
 
 \begin{frame}{Coarse $C/E$ results}
+    \vspace*{-0.3cm}
     \begin{figure}[T]
         \begin{subfigure}{0.475\linewidth}
             \includegraphics[height=0.8\linewidth]{figures/coarse_temp_num_to_analy_ratios.png}
@@ -525,7 +547,6 @@
         \begin{equation}
             \psi(x,\mu) = \psi(x,-1) \delta(\mu+1) + \psi(x,1) \delta(\mu-1)
         \end{equation}
-        (sometimes denoted $\psi^{+}\equiv \psi(x,1) \delta(\mu-1) $ and $\psi^{-}\equiv \psi(x,-1) \delta(\mu+1) $)
         \newpage
         Now carrying out the integral definitions with $S_{2}$ quantities gives
         \begin{equation} \label{scalar flux}
@@ -579,12 +600,8 @@
         \end{equation}
         At this point, we ``un-lump" the scattering cross section to write out the fission term
         \begin{equation}
-            -\frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)\phi(x) =
-            \left\lbrack\Sigma_{s}(x) + \frac{\nu \Sigma_{f}}{k_{eff}}\right\rbrack\phi(x)
-        \end{equation}
-        \begin{equation}
-            -\frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
-            \left\lbrack1 - \frac{\Sigma_{s}(x) + \frac{\nu \Sigma_{f}}{k_{eff}}}{\Sigma_{t}}\right\rbrack\phi(x) = 0
+            -\frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)\phi(x) -
+            \left\lbrack\Sigma_{s}(x) + \frac{\nu \Sigma_{f}}{k_{eff}}\right\rbrack\phi(x) = 0
         \end{equation}
         \begin{equation}
             \frac{d}{dx}\left\lbrack\frac{1}{\Sigma_{t}(x)} \frac{d\phi(x)}{dx} \right\rbrack + \Sigma_{t}(x)
@@ -630,6 +647,7 @@
 \end{withoutheadline}
 
 \begin{frame}{Analytical Benchmark ODEs}
+    \vspace*{-0.25cm}
     \begin{itemize}
         \item Based on 1-D $S_{2}$ transport, the neutron flux $\phi(x)$ is governed by
         \begin{multline}
@@ -638,7 +656,7 @@
             \QWITH \\
             \pm \frac{d\phi}{dx}\bigg|_{x=\pm \frac{L}{2}} +  \Sigma_{t}(x=\pm \frac{L}{2})  \phi(x=\pm \frac{L}{2})  = 0
         \end{multline}
-        \item with $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ \cite{analytical-benchmark}.
+        \item $\lambda \equiv (\frac{1}{k_{eff}}\frac{\nu \Sigma_{f}}{\Sigma_{t}} + \frac{\Sigma_{s}}{\Sigma_{t}} )$ \cite{analytical-benchmark}.
         \item The conduction equation governs energy conservation in the slab
         \begin{multline}
             \frac{d}{dx}\left\lbrack\kappa(T)\frac{dT(x)}{dx}\right\rbrack + q \Sigma_{t}(x)\phi(x) = 0
